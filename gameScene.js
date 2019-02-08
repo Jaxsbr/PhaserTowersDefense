@@ -59,6 +59,8 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.tower = new Tower(this, 5, 2);
+
     this.createSquidAnimations();
 
     this.add.image(400, 300, 'background');
@@ -111,6 +113,7 @@ class GameScene extends Phaser.Scene {
   }
 
   update() {
+    this.tower.update();
     this.enemySpawner.update(this.game.loop.delta);
     this.enemies.forEach((enemy) => enemy.update());
   }
