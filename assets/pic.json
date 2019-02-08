@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "pic.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 66,
+				"h": 34
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "tile_spritesheet.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 32
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 64,
+						"h": 32
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:4a5139d3247cf369953245b74382bca5:da63cd173ae73a57befacd49e3d61efb:24e76148b65888753d69f18d1cd1ed70$"
+	}
+}
