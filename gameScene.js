@@ -5,11 +5,15 @@ class GameScene extends Phaser.Scene {
     this.init();
   }
 
-  init() {    
+  init() {
     this.rows = 10;
     this.cols = 10;
     this.enemyPoolSize = 150;
+    this.tiles = [];
+    this.initMap();
+  }
 
+  initMap() {
     this.map = [
       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -22,8 +26,6 @@ class GameScene extends Phaser.Scene {
       [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     ];
-
-    this.tiles = [];
 
     this.waypoints = [
       { x: 0, y: 0 },
@@ -129,7 +131,7 @@ class GameScene extends Phaser.Scene {
         enemy.activate(true);
         break;
       }
-    }    
+    }
   }
 
   createSquidAnimations() {
