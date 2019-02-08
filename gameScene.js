@@ -5,15 +5,7 @@ class GameScene extends Phaser.Scene {
     this.init();
   }
 
-  init() {
-    // this.timedEvent = this.time.delayedCall(
-    //   1000,
-    //   function() {
-    //     // TEMP: placeholder
-    //   },
-    //   [],
-    //   this
-    // );
+  init() {    
     this.rows = 10;
     this.cols = 10;
     this.enemyPoolSize = 150;
@@ -125,9 +117,9 @@ class GameScene extends Phaser.Scene {
     // TODO:
     // This is called from enemy class, the idea is to pass a "delegate"
     // from this gameScene class to enemy and then have enemy call the delegate method.
-    // When we addEnemy is call in this way, we lose context of the parent"this".
+    // When addEnemy is called in this way, we lose context of the parent"this".
     // Thus passing of gameScene.
-    // This is rubish and we should find a better solution.
+    // This is feels hacky, we should find a better solution.
 
     let enemy;
     for (let e = 0; e < gameScene.enemies.length; e++) {
@@ -137,9 +129,7 @@ class GameScene extends Phaser.Scene {
         enemy.activate(true);
         break;
       }
-    }
-
-    // gameScene.enemies.push(new Enemy(gameScene));
+    }    
   }
 
   createSquidAnimations() {
