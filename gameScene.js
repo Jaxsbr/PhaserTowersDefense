@@ -6,6 +6,8 @@ class GameScene extends Phaser.Scene {
   }
 
   init() {
+    window.addEventListener('spawnEnemy', this.spawnEnemy);
+
     this.rows = 10;
     this.cols = 10;
     this.enemyPoolSize = 150;
@@ -58,35 +60,45 @@ class GameScene extends Phaser.Scene {
     ];
   }
 
-  create() {
-    this.tower = new Tower(this, 5, 2);
+  create() {    
+    this.add.image(400, 300, 'background');
 
     this.createSquidAnimations();
 
-    this.add.image(400, 300, 'background');
+    this.createTowerAnimations();    
 
     this.placeTiles();
 
+    this.tower = new Tower(this, 5, 2);
+
+    let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
+
+    let center = this.game.getScreenCenter(offset);
+
     this.enemies = [];
     for (let e = 0; e < this.enemyPoolSize; e++) {
-      let enemy = new Enemy(this);
-      enemy.alive = false;
-      enemy.sprite.active = false;
+      let sprite = this.add.sprite(0, 0, 'squidDown').setOrigin(0, 0);
+      sprite.scaleX = 0.5;
+      sprite.scaleY = 0.5;
+
+      let waypoints = this.waypoints.slice();
+
+      let enemy = new Enemy(sprite, waypoints);
+      
+      enemy.activate(false);
+
+      enemy.reset(center);
+
       this.enemies.push(enemy);
     }
 
     this.enemySpawner = new EnemySpawner(this, this.addEnemy);
   }
 
-  getScreenCenter() {
-    return {
-      x: this.game.config.width / 2 - (this.cols * 32) / 2,
-      y: this.game.config.height / 2 - (this.rows * 32) / 2,
-    };
-  }
-
   placeTiles() {
-    let center = this.getScreenCenter();
+    let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
+    let center = this.game.getScreenCenter(offset);
+
     for (var row = 0; row < this.rows; row++) {
       this.tiles[row] = [];
 
@@ -118,7 +130,7 @@ class GameScene extends Phaser.Scene {
     this.enemies.forEach((enemy) => enemy.update());
   }
 
-  addEnemy(gameScene) {
+  spawnEnemy() {
     // TODO:
     // This is called from enemy class, the idea is to pass a "delegate"
     // from this gameScene class to enemy and then have enemy call the delegate method.
@@ -127,10 +139,13 @@ class GameScene extends Phaser.Scene {
     // This is feels hacky, we should find a better solution.
 
     let enemy;
-    for (let e = 0; e < gameScene.enemies.length; e++) {
-      enemy = gameScene.enemies[e];
+    let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
+    let center = this.game.getScreenCenter(offset);
+
+    for (let e = 0; e < this.enemies.length; e++) {
+      enemy = this.enemies[e];
       if (!enemy.sprite.active) {
-        enemy.reset();
+        enemy.reset(center);
         enemy.activate(true);
         break;
       }
@@ -179,6 +194,19 @@ class GameScene extends Phaser.Scene {
         first: 9,
       }),
       repeat: -1,
+      frameRate: 5,
+    });
+  }
+
+  createTowerAnimations() {
+    this.anims.create({
+      key: 'towerIdle',
+      frames: this.anims.generateFrameNumbers('tower', {
+        start: 0,
+        end: 0,
+        first: 0,
+      }),
+      repeat: 1,
       frameRate: 5,
     });
   }

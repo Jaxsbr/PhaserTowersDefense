@@ -1,6 +1,7 @@
 class Enemy {
-  constructor(gameScene) {
-    this.gameScene = gameScene;
+  constructor(sprite, originalWayPoints) {
+    this.sprite = sprite;
+    this.originalWayPoints = originalWayPoints;
     this.init();
   }
 
@@ -9,14 +10,17 @@ class Enemy {
     this.moveSpeed = 1.5;
     this.movements = { left: false, right: false, up: false, down: false };
 
-    this.sprite = this.gameScene.add.sprite(0, 0, 'squidDown').setOrigin(0, 0);
+    //this.sprite = this.gameScene.add.sprite(0, 0, 'squidDown').setOrigin(0, 0);    
+    //this.sprite.anims.play('squidDown');
 
-    this.sprite.scaleX = 0.5;
-    this.sprite.scaleY = 0.5;
-    this.sprite.anims.play('squidDown');
-
-    this.reset();
+    //this.reset();
     this.activate(false);
+
+    this.distance = 0;
+    this.direction = new Phaser.Geom.Point(0, 0);
+    this.directionVector = new Phaser.Math.Vector2(0, 0);
+    this.normalized = new Phaser.Math.Vector2(0, 0);
+    this.velocity = new Phaser.Math.Vector2(0, 0);
   }
 
   update() {
@@ -35,27 +39,28 @@ class Enemy {
     }
 
     this.updateCenter();
-    let direction = this.subtractPoints(this.center, this.next);
-    let distance = Phaser.Geom.Point.GetMagnitude(direction);
+    this.direction = this.subtractPoints(this.center, this.next);
+    this.distance = Phaser.Geom.Point.GetMagnitude(this.direction);
 
-    if (this.nextWayPointReached(distance)) {
+    if (this.nextWayPointReached(this.distance)) {
       if (lastWaypoint) {
         this.next = null;
         this.activate(false);
         return;
       } else {
         this.setNextWayPoint(this.waypoints.shift());
-        direction = this.subtractPoints(this.center, this.next);
+        this.direction = this.subtractPoints(this.center, this.next);
       }
     }
 
-    let directionVector = new Phaser.Math.Vector2(direction.x, direction.y);
-    let normalized = directionVector.normalize();
+    this.directionVector.x = this.direction.x
+    this.directionVector.y = this.direction.y;
+    this.normalized = this.directionVector.normalize();
 
-    if (!isNaN(normalized.x) && !isNaN(normalized.y)) {
+    if (!isNaN(this.normalized.x) && !isNaN(this.normalized.y)) {
       this.setVelocity(
-        normalized.x * this.moveSpeed,
-        normalized.y * this.moveSpeed
+        this.normalized.x * this.moveSpeed,
+        this.normalized.y * this.moveSpeed
       );
 
       this.setMoveDirection();
@@ -123,13 +128,12 @@ class Enemy {
     }
   }
 
-  reset() {
-    let center = this.gameScene.getScreenCenter();
-    this.sprite.y = center.y;
-    this.sprite.x = center.x + 1;
+  reset(startPoint) {
+    this.sprite.y = startPoint.y;
+    this.sprite.x = startPoint.x + 1;
 
-    this.waypoints = this.gameScene.waypoints.slice();
-    this.velocity = new Phaser.Geom.Point(0, 0);
+    this.waypoints = this.originalWayPoints.slice();
+    this.setVelocity(0, 0);
   }
 
   activate(active) {

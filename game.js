@@ -13,3 +13,10 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+
+game.getScreenCenter = function(offset) {
+  return {
+    x: game.config.width / 2 - offset.x,
+    y: game.config.height / 2 - offset.y,
+  };
+};

@@ -5,6 +5,12 @@ class LoadScene extends Phaser.Scene {
 
   preload() {
     this.load.image('background', 'assets/background.png');
+
+    this.load.spritesheet('tower', 'assets/tower.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+
     this.load.spritesheet('ork', 'assets/ork_spritesheet.png', {
       frameWidth: 96,
       frameHeight: 96,
