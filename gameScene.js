@@ -69,13 +69,11 @@ class GameScene extends Phaser.Scene {
 
     this.placeTiles();
 
-    this.tower = new Tower(5, 2);
-
     let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
 
     let center = this.game.getScreenCenter(offset);
 
-    this.towers = [];
+    this.towers = [new Tower(5, 2)];
 
     this.enemies = [];
     for (let e = 0; e < this.enemyPoolSize; e++) {
@@ -129,8 +127,8 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  update() {
-    this.tower.update();
+  update() {    
+    this.towers.forEach((tower) => tower.update());
     this.enemySpawner.update(this.game.loop.delta);
     this.enemies.forEach((enemy) => enemy.update());
     this.updateTowerTargets();
@@ -157,7 +155,7 @@ class GameScene extends Phaser.Scene {
           continue;
         }
 
-        let direction = this.game.subtractPoints(tower.center, enemy.next);
+        let direction = this.game.subtractPoints(tower.center, enemy.center);
         let distance = Phaser.Geom.Point.GetMagnitude(direction);
 
         if (distance < closestDistance) {

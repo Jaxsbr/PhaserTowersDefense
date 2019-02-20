@@ -12,6 +12,7 @@ class Enemy {
 
     this.activate(false);
 
+    this.center = new Phaser.Geom.Point(0, 0);
     this.distance = 0;
     this.direction = new Phaser.Geom.Point(0, 0);
     this.directionVector = new Phaser.Math.Vector2(0, 0);
