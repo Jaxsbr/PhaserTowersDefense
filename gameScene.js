@@ -60,20 +60,22 @@ class GameScene extends Phaser.Scene {
     ];
   }
 
-  create() {    
+  create() {
     this.add.image(400, 300, 'background');
 
     this.createSquidAnimations();
 
-    this.createTowerAnimations();    
+    this.createTowerAnimations();
 
     this.placeTiles();
 
-    this.tower = new Tower(this, 5, 2);
+    this.tower = new Tower(5, 2);
 
     let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
 
     let center = this.game.getScreenCenter(offset);
+
+    this.towers = [];
 
     this.enemies = [];
     for (let e = 0; e < this.enemyPoolSize; e++) {
@@ -84,15 +86,18 @@ class GameScene extends Phaser.Scene {
       let waypoints = this.waypoints.slice();
 
       let enemy = new Enemy(sprite, waypoints);
-      
+
       enemy.activate(false);
 
-      enemy.reset(center);
+      enemy.reset(center, 10, 1.5); // default hp(10) and movespeed(1.5)
 
       this.enemies.push(enemy);
     }
 
-    this.enemySpawner = new EnemySpawner(this, this.addEnemy);
+    this.enemySpawner = new EnemySpawner();
+    // TODO:
+    // Move spawnRate value into level map file
+    this.enemySpawner.setSpawnRate(2500);
   }
 
   placeTiles() {
@@ -128,24 +133,59 @@ class GameScene extends Phaser.Scene {
     this.tower.update();
     this.enemySpawner.update(this.game.loop.delta);
     this.enemies.forEach((enemy) => enemy.update());
+    this.updateTowerTargets();
+  }
+
+  updateTowerTargets() {
+    for (let t = 0; t < this.towers.length; t++) {
+      let closestEnemy;
+      let closestDistance = 99999;
+      let tower = this.towers[t];
+
+      for (let e = 0; e < this.enemies.length; e++) {
+        // TODO:
+        // Only check active enemies
+
+        // TODO:
+        // Use relative closeness by determining if
+        // enemy within x amount of tiles from tower, only then check distance.
+
+        let enemy = this.enemies[e];
+
+        if (!closestEnemy) {
+          closestEnemy = enemy;
+          continue;
+        }
+
+        let direction = this.game.subtractPoints(tower.center, enemy.next);
+        let distance = Phaser.Geom.Point.GetMagnitude(direction);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestEnemy = enemy;
+        }
+      }
+
+      tower.targetEnemy = closestEnemy;
+    }
   }
 
   spawnEnemy() {
-    // TODO:
-    // This is called from enemy class, the idea is to pass a "delegate"
-    // from this gameScene class to enemy and then have enemy call the delegate method.
-    // When addEnemy is called in this way, we lose context of the parent"this".
-    // Thus passing of gameScene.
-    // This is feels hacky, we should find a better solution.
-
+    let gameScene = game.scene.scenes[1];
     let enemy;
-    let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
-    let center = this.game.getScreenCenter(offset);
+    let offset = { x: (gameScene.cols * 32) / 2, y: (gameScene.rows * 32) / 2 };
+    let center = gameScene.game.getScreenCenter(offset);
 
-    for (let e = 0; e < this.enemies.length; e++) {
-      enemy = this.enemies[e];
+    // TODO:
+    // Enemies require stats assigned to them per level.
+    // Below is temporary and should be retrieved from map/level/enemy/configuration.
+    let hp = 10;
+    let moveSpeed = 0.5;
+
+    for (let e = 0; e < gameScene.enemies.length; e++) {
+      enemy = gameScene.enemies[e];
       if (!enemy.sprite.active) {
-        enemy.reset(center);
+        enemy.reset(center, hp, moveSpeed);
         enemy.activate(true);
         break;
       }

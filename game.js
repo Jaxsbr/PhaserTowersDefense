@@ -20,3 +20,11 @@ game.getScreenCenter = function(offset) {
     y: game.config.height / 2 - offset.y,
   };
 };
+
+game.subtractPoints = function(fromPoint, toPoint) {
+  let temp = Phaser.Geom.Point.Clone(toPoint);
+  temp.x -= fromPoint.x;
+  temp.y -= fromPoint.y;
+
+  return temp;
+};

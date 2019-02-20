@@ -2,18 +2,14 @@ class Enemy {
   constructor(sprite, originalWayPoints) {
     this.sprite = sprite;
     this.originalWayPoints = originalWayPoints;
+    this.gameScene = game.scene.scenes[1];
     this.init();
   }
 
   init() {
     this.wayPointReachedThreshold = 2;
-    this.moveSpeed = 1.5;
     this.movements = { left: false, right: false, up: false, down: false };
 
-    //this.sprite = this.gameScene.add.sprite(0, 0, 'squidDown').setOrigin(0, 0);    
-    //this.sprite.anims.play('squidDown');
-
-    //this.reset();
     this.activate(false);
 
     this.distance = 0;
@@ -39,6 +35,8 @@ class Enemy {
     }
 
     this.updateCenter();
+    // TODO:
+    // use SubtractPoints in game objects instead
     this.direction = this.subtractPoints(this.center, this.next);
     this.distance = Phaser.Geom.Point.GetMagnitude(this.direction);
 
@@ -49,11 +47,13 @@ class Enemy {
         return;
       } else {
         this.setNextWayPoint(this.waypoints.shift());
+        // TODO:
+        // use SubtractPoints in game objects instead
         this.direction = this.subtractPoints(this.center, this.next);
       }
     }
 
-    this.directionVector.x = this.direction.x
+    this.directionVector.x = this.direction.x;
     this.directionVector.y = this.direction.y;
     this.normalized = this.directionVector.normalize();
 
@@ -83,6 +83,8 @@ class Enemy {
   }
 
   subtractPoints(fromPoint, toPoint) {
+    // TODO:
+    // Remove function, this has found in the game object
     let temp = Phaser.Geom.Point.Clone(toPoint);
     temp.x -= fromPoint.x;
     temp.y -= fromPoint.y;
@@ -128,9 +130,11 @@ class Enemy {
     }
   }
 
-  reset(startPoint) {
+  reset(startPoint, hp, moveSpeed) {
     this.sprite.y = startPoint.y;
-    this.sprite.x = startPoint.x + 1;
+    this.sprite.x = startPoint.x;
+    this.hp = hp;
+    this.moveSpeed = moveSpeed;
 
     this.waypoints = this.originalWayPoints.slice();
     this.setVelocity(0, 0);
