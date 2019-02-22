@@ -14,6 +14,14 @@ class HUD {
 
     this.selectedTower;
 
+    this.plainTower.scaleX = 1;
+    this.plainTower.scaleY = 1;
+    this.plainTower.anims.play('towerPlainIdle');
+
+    this.slowTower.scaleX = 1;
+    this.slowTower.scaleY = 1;
+    this.slowTower.anims.play('towerSlowIdle');
+
     this.plainTower.on('pointerdown', function(pointer) {
       this.setTint(0xff0000);
     });
@@ -34,19 +42,24 @@ class HUD {
 
     this.gameScene.input.on('pointermove', function(pointer) {
       let gameScene = game.scene.scenes[1];
-
       if (gameScene.hud.selectedTower) {
-        gameScene.hud.selectedTower.x = pointer.worldX;
-        gameScene.hud.selectedTower.y = pointer.worldY;
+        gameScene.hud.selectedTower.x =
+          pointer.worldX - gameScene.hud.selectedTower.width / 2;
+        gameScene.hud.selectedTower.y =
+          pointer.worldY - gameScene.hud.selectedTower.height / 2;
       }
     });
 
-    this.plainTower.scaleX = 1;
-    this.plainTower.scaleY = 1;
-    this.plainTower.anims.play('towerPlainIdle');
+    this.gameScene.input.on('pointerdown', function(pointer) {
+      let gameScene = game.scene.scenes[1];
+      if (gameScene.hud.selectedTower) {
+        // TODO:
+        // IF   >> Valid placement can occur, place new tower
+        // ELSE >> Pointer outside map, clear selection
 
-    this.slowTower.scaleX = 1;
-    this.slowTower.scaleY = 1;
-    this.slowTower.anims.play('towerSlowIdle');
+        gameScene.towers.push(gameScene.hud.selectedTower);
+        gameScene.hud.selectedTower = null;
+      }
+    });
   }
 }

@@ -67,11 +67,11 @@ class GameScene extends Phaser.Scene {
 
     this.createTowerAnimations();
 
-    this.placeTiles();
-
     let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
 
     let center = this.game.getScreenCenter(offset);
+
+    this.placeTiles(center);
 
     this.towers = [new Tower(5, 2)];
 
@@ -100,10 +100,7 @@ class GameScene extends Phaser.Scene {
     this.hud = new HUD();
   }
 
-  placeTiles() {
-    let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
-    let center = this.game.getScreenCenter(offset);
-
+  placeTiles(center) {
     for (var row = 0; row < this.rows; row++) {
       this.tiles[row] = [];
 
