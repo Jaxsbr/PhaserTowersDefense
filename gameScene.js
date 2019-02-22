@@ -96,6 +96,8 @@ class GameScene extends Phaser.Scene {
     // TODO:
     // Move spawnRate value into level map file
     this.enemySpawner.setSpawnRate(2500);
+
+    this.hud = new HUD();
   }
 
   placeTiles() {
@@ -127,7 +129,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  update() {    
+  update() {
     this.towers.forEach((tower) => tower.update());
     this.enemySpawner.update(this.game.loop.delta);
     this.enemies.forEach((enemy) => enemy.update());
@@ -238,8 +240,19 @@ class GameScene extends Phaser.Scene {
 
   createTowerAnimations() {
     this.anims.create({
-      key: 'towerIdle',
-      frames: this.anims.generateFrameNumbers('tower', {
+      key: 'towerPlainIdle',
+      frames: this.anims.generateFrameNumbers('tower_plain', {
+        start: 0,
+        end: 0,
+        first: 0,
+      }),
+      repeat: 1,
+      frameRate: 5,
+    });
+
+    this.anims.create({
+      key: 'towerSlowIdle',
+      frames: this.anims.generateFrameNumbers('tower_slow', {
         start: 0,
         end: 0,
         first: 0,

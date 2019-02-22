@@ -4,20 +4,22 @@ class Tower {
     this.tileX = tileX;
     this.tileY = tileY;
 
-    this.sprite = this.gameScene.add.sprite(0, 0, 'towerIdle').setOrigin(0.5, 0.5);
+    this.sprite = this.gameScene.add
+      .sprite(0, 0, 'towerPlainIdle')
+      .setOrigin(0.5, 0.5);
     this.sprite.scaleX = 1;
     this.sprite.scaleY = 1;
-    this.sprite.anims.play('towerIdle');
+    this.sprite.anims.play('towerPlainIdle');
     let position = this.gameScene.tiles[this.tileY][this.tileX].tileBounds;
     this.sprite.y = position.y;
     this.sprite.x = position.x;
 
-    this.targetEnemy;    
+    this.targetEnemy;
     this.range = 64;
   }
 
   update() {
-    this.updateCenter();    
+    this.updateCenter();
     this.updateRotation();
   }
 
@@ -40,40 +42,40 @@ class Tower {
   }
 
   updateRotation() {
-    // Rotate the tower towards it's current target or 
+    // Rotate the tower towards it's current target or
     // rotate to default position if no target exist or if target not in range.
     if (this.targetEnemy != null) {
       if (this.targetEnemy.alive) {
+        let direction = this.gameScene.game.subtractPoints(
+          this.center,
+          this.targetEnemy.center
+        );
+        let distance = Phaser.Geom.Point.GetMagnitude(direction);
 
-        let direction = this.gameScene.game.subtractPoints(this.center, this.targetEnemy.center);
-        let distance = Phaser.Geom.Point.GetMagnitude(direction);          
+        if (distance <= this.range) {
+          this.rotation =
+            Math.atan2(
+              this.targetEnemy.center.y - this.center.y,
+              this.targetEnemy.center.x - this.center.x
+            ) *
+            (180 / Math.PI);
+        } else {
+          this.targetEnemy = null;
 
-          if (distance <= this.range) {
-              this.rotation = (Math.atan2(
-                this.targetEnemy.center.y - this.center.y, 
-                this.targetEnemy.center.x - this.center.x
-                ) * (180 / Math.PI));
+          if (this.rotation > 0) {
+            this.rotation = this.rotation - 0.01;
+          } else {
+            this.rotation = 0;
           }
-          else {
-              this.targetEnemy = null;
-
-              if (this.rotation > 0) {
-                  this.rotation = this.rotation - 0.01;
-              }
-              else {
-                  this.rotation = 0;
-              }
-          }
+        }
       }
-    }
-    else {
+    } else {
       this.targetEnemy = null;
 
       if (this.rotation > 0) {
-          this.rotation = this.rotation - 0.01;
-      }
-      else {
-          this.rotation = 0;
+        this.rotation = this.rotation - 0.01;
+      } else {
+        this.rotation = 0;
       }
     }
 

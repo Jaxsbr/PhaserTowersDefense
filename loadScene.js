@@ -6,7 +6,12 @@ class LoadScene extends Phaser.Scene {
   preload() {
     this.load.image('background', 'assets/background.png');
 
-    this.load.spritesheet('tower', 'assets/tower.png', {
+    this.load.spritesheet('tower_plain', 'assets/tower_plain.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+
+    this.load.spritesheet('tower_slow', 'assets/tower_slow.png', {
       frameWidth: 32,
       frameHeight: 32,
     });
