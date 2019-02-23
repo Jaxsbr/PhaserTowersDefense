@@ -11,8 +11,8 @@ class Tower {
     this.sprite.scaleY = 1;
     this.sprite.anims.play('towerPlainIdle');
     let position = this.gameScene.tiles[this.tileY][this.tileX].tileBounds;
-    this.sprite.y = position.y;
-    this.sprite.x = position.x;
+    this.sprite.y = position.y - 16;
+    this.sprite.x = position.x - 16;
 
     this.targetEnemy;
     this.range = 64;

@@ -54,11 +54,23 @@ class HUD {
       let gameScene = game.scene.scenes[1];
       if (gameScene.hud.selectedTower) {
         // TODO:
-        // IF   >> Valid placement can occur, place new tower
-        // ELSE >> Pointer outside map, clear selection
+        // Remove world offset from pointer
+        
+        let offset = { x: (gameScene.cols * 32) / 2, y: (gameScene.rows * 32) / 2 };
+        let mapStart = game.getScreenCenter(offset);        
+        let tileX = Math.ceil((pointer.worldX - mapStart.x) / 32);
+        let tileY = Math.ceil((pointer.worldY - mapStart.y) / 32);
 
-        gameScene.towers.push(gameScene.hud.selectedTower);
-        gameScene.hud.selectedTower = null;
+        if (!(tileX < 0 || tileX > gameScene.cols ||
+          tileY < 0 || tileY > gameScene.rows)) {          
+          let tower = new Tower(tileX, tileY, gameScene.hud.selectedTower.texture);        
+
+          // Instead of pushing object directly into array,
+          // send request to the responsible tower factory to do the work.
+          gameScene.towers.push(tower);
+        }
+        
+        gameScene.hud.selectedTower.active = false;
       }
     });
   }
