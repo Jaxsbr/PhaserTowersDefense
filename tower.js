@@ -54,15 +54,14 @@ class Tower {
           Math.atan2(
             this.targetEnemy.center.y - this.center.y,
             this.targetEnemy.center.x - this.center.x
-          ) *
-          (180 / Math.PI);
+          ) * (180 / Math.PI);
       }      
     } else {
-      if (this.rotation > 0) {
-        this.rotation = this.rotation - 0.01;
-      } else {
-        this.rotation = 0;
-      }
+        if (this.rotation > 0) {
+          this.rotation = this.rotation - 0.01;
+        } else {
+          this.rotation = 0;
+        }
     }
 
     this.sprite.angle = this.rotation;

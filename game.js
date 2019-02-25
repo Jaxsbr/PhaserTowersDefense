@@ -13,6 +13,8 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+game.tileWidth = 32;
+game.tileHeight = 32;
 
 game.getScreenCenter = function(offset) {
   return {
@@ -33,25 +35,30 @@ game.getTileIndexFromPointer = function(pointer) {
   let gameScene = this.scene.scenes[1];
 
   let offset = { 
-    x: (gameScene.cols * 32) / 2, 
-    y: (gameScene.rows * 32) / 2 };
+    x: (gameScene.cols * this.tileWidth) / 2, 
+    y: (gameScene.rows * this.tileHeight) / 2 };
   let mapStart = this.getScreenCenter(offset);    
 
   let mapPoint = { 
     x: pointer.worldX - mapStart.x, 
     y: pointer.worldY - mapStart.y };
-
-  // TODO:
-  // 32 represents tile size, move all references of this to new tileWidth and height variable.
-  // Variable should be retrieved from level/map config.
-  let tileX = Math.floor(mapPoint.x / 32);
-  let tileY = Math.floor(mapPoint.y / 32);
+  
+  let tileX = Math.floor(mapPoint.x / this.tileWidth);
+  let tileY = Math.floor(mapPoint.y / this.tileHeight);
 
   return { x: tileX, y: tileY };
 }
 
 game.isValidMapTile = function(tileIndex) {
   let gameScene = this.scene.scenes[1];
+
+  for (let w = 0; w < gameScene.waypoints.length; w++) {
+    if(gameScene.waypoints[w].x == tileIndex.x &&
+       gameScene.waypoints[w].y == tileIndex.y) {
+         return false;
+       }
+  }
+
   return !(tileIndex.x < 0 || 
            tileIndex.y < 0 || 
            tileIndex.x > gameScene.cols ||          

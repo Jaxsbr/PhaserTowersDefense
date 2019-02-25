@@ -5,14 +5,15 @@ class GameScene extends Phaser.Scene {
     this.init();
   }
 
-  init() {
-    window.addEventListener('spawnEnemy', this.spawnEnemy);
-
+  init() {    
     this.rows = 10;
     this.cols = 10;
     this.enemyPoolSize = 150;
     this.tiles = [];
+    this.levelIndex = 1;
     this.initMap();
+
+    window.addEventListener('spawnEnemy', this.spawnEnemy);
   }
 
   initMap() {
@@ -61,13 +62,15 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.level = new Level(this.levelIndex);
+
     this.add.image(400, 300, 'background');
 
     this.createSquidAnimations();
 
     this.createTowerAnimations();
 
-    let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
+    let offset = { x: (this.cols * game.tileWidth) / 2, y: (this.rows * game.tileHeight) / 2 };
 
     let mapStart = this.game.getScreenCenter(offset);
 
@@ -87,15 +90,13 @@ class GameScene extends Phaser.Scene {
 
       enemy.activate(false);
 
-      enemy.reset(mapStart, 10, 1.5); // default hp(10) and movespeed(1.5)
+      enemy.reset(mapStart, this.level.enemyHp, this.level.enemyMoveSpeed);
 
       this.enemies.push(enemy);
     }
 
-    this.enemySpawner = new EnemySpawner();
-    // TODO:
-    // Move spawnRate value into level map file
-    this.enemySpawner.setSpawnRate(10000);
+    this.enemySpawner = new EnemySpawner();    
+    this.enemySpawner.setSpawnRate(this.level.enemySpawnRate);
 
     this.hud = new HUD();
   }
@@ -108,15 +109,15 @@ class GameScene extends Phaser.Scene {
         this.tiles[row][col] = {
           tileMapIndex: this.map[row][col],
           tileBounds: new Phaser.Geom.Rectangle(
-            mapStart.x + col * 32,
-            mapStart.y + row * 32,
-            32,
-            32
+            mapStart.x + col * game.tileWidth,
+            mapStart.y + row * game.tileHeight,
+            game.TileWidth,
+            game.TileHeight
           ),
           sprite: this.add
             .sprite(
-              mapStart.x + col * 32,
-              mapStart.y + row * 32,
+              mapStart.x + col * game.tileWidth,
+              mapStart.y + row * game.tileHeight,
               'tiles',
               this.map[row][col]
             )
@@ -158,7 +159,6 @@ class GameScene extends Phaser.Scene {
           closestDistance = distance;
           continue;
         }        
-        //console.log('enemy distance: ' + distance);
 
         if (distance < closestDistance) {
           closestDistance = distance;
@@ -174,16 +174,12 @@ class GameScene extends Phaser.Scene {
     let gameScene = game.scene.scenes[1];
     let enemy;
     let offset = {
-      x: (gameScene.cols * 32) / 2,
-      y: (gameScene.rows * 32) / 2,
+      x: (gameScene.cols * game.tileWidth) / 2,
+      y: (gameScene.rows * game.tileHeight) / 2,
     };
-    let center = gameScene.game.getScreenCenter(offset);
-
-    // TODO:
-    // Enemies require stats assigned to them per level.
-    // Below is temporary and should be retrieved from map/level/enemy/configuration.
-    let hp = 10;
-    let moveSpeed = 0.5;
+    let center = gameScene.game.getScreenCenter(offset);    
+    let hp = gameScene.level.enemyHp;
+    let moveSpeed = gameScene.level.enemyMoveSpeed;
 
     for (let e = 0; e < gameScene.enemies.length; e++) {
       enemy = gameScene.enemies[e];

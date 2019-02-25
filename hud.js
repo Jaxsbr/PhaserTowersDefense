@@ -38,7 +38,7 @@ class HUD {
         .setOrigin(0, 0)
         .setInteractive();
       gameScene.hud.selectedTower.anims.play('towerPlainIdle');
-      gameScene.hud.selectedTower.bringToTop();
+      //gameScene.hud.selectedTower.bringToTop();
     });
 
     this.gameScene.input.on('pointermove', function(pointer) {

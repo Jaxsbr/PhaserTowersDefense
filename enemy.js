@@ -7,7 +7,7 @@ class Enemy {
   }
 
   init() {
-    this.wayPointReachedThreshold = 2;
+    this.wayPointReachedThreshold = 0.5;
     this.movements = { left: false, right: false, up: false, down: false };
 
     this.activate(false);
