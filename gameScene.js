@@ -127,21 +127,21 @@ class GameScene extends Phaser.Scene {
   }
 
   update() {
-    this.towers.forEach((tower) => tower.update());
-    this.updateTowerTargets();
+    this.towers.forEach((tower) => tower.update());    
     this.enemySpawner.update(this.game.loop.delta);
     this.enemies.forEach((enemy) => enemy.update());    
+    this.updateTowerTargets();
   }
 
   updateTowerTargets() {
     for (let t = 0; t < this.towers.length; t++) {
-      let closestEnemy;
+      let closestEnemy = null;
       let closestDistance = 99999;
       let tower = this.towers[t];
 
       for (let e = 0; e < this.enemies.length; e++) {
         let enemy = this.enemies[e];
-        if (!enemy.sprite.active) {
+        if (!enemy.sprite.active || !enemy.alive) {
           continue;
         }
 
@@ -149,13 +149,15 @@ class GameScene extends Phaser.Scene {
         // Use relative closeness by determining if
         // enemy within x amount of tiles from tower, only then check distance.
 
-        if (!closestEnemy) {
-          closestEnemy = enemy;
-          continue;
-        }
-
         let direction = this.game.subtractPoints(tower.center, enemy.center);
         let distance = Phaser.Geom.Point.GetMagnitude(direction);
+
+        if (closestEnemy == null) {
+          // If no target exists, take first viable enemy.
+          closestEnemy = enemy;
+          closestDistance = distance;
+          continue;
+        }        
         //console.log('enemy distance: ' + distance);
 
         if (distance < closestDistance) {

@@ -38,15 +38,24 @@ class HUD {
         .setOrigin(0, 0)
         .setInteractive();
       gameScene.hud.selectedTower.anims.play('towerPlainIdle');
+      gameScene.hud.selectedTower.bringToTop();
     });
 
     this.gameScene.input.on('pointermove', function(pointer) {
       let gameScene = game.scene.scenes[1];
       if (gameScene.hud.selectedTower) {
-        gameScene.hud.selectedTower.x =
-          pointer.worldX - gameScene.hud.selectedTower.width / 2;
-        gameScene.hud.selectedTower.y =
-          pointer.worldY - gameScene.hud.selectedTower.height / 2;
+
+        gameScene.hud.selectedTower.x = pointer.worldX - gameScene.hud.selectedTower.width / 2;
+        gameScene.hud.selectedTower.y = pointer.worldY - gameScene.hud.selectedTower.height / 2;
+
+        let tileIndex = game.getTileIndexFromPointer(pointer);
+
+        if (game.isValidMapTile(tileIndex) && game.isTileEmpty(tileIndex)) {                
+            gameScene.hud.selectedTower.setTint(0x1caf2c);                    
+        }
+        else {
+          gameScene.hud.selectedTower.setTint(0xff0000);
+        }
       }
     });
 
@@ -54,34 +63,21 @@ class HUD {
       let gameScene = game.scene.scenes[1];
       if (gameScene.hud.selectedTower) {
 
-        let offset = { 
-          x: (gameScene.cols * 32) / 2, 
-          y: (gameScene.rows * 32) / 2 };
-        let mapStart = game.getScreenCenter(offset);        
+        let tileIndex = game.getTileIndexFromPointer(pointer);
 
-        let mapPoint = { 
-          x: pointer.worldX - mapStart.x, 
-          y: pointer.worldY - mapStart.y };
+        if (game.isValidMapTile(tileIndex) && game.isTileEmpty(tileIndex)) {          
 
-        let tileX = Math.floor(mapPoint.x / 32);
-        let tileY = Math.floor(mapPoint.y / 32);
-
-        console.log('tileX: ' + tileX + "  tileY: " + tileY + "  mapstartX: " + mapStart.x + " mapstartY: " + mapStart.y);
-
-        if (!(tileX < 0 || 
-              tileY < 0 || 
-              tileX > gameScene.cols ||          
-              tileY > gameScene.rows)) {          
-                
-          let tower = new Tower(tileX, tileY, gameScene.hud.selectedTower.texture);        
+          let tower = new Tower(tileIndex.x, tileIndex.y, gameScene.hud.selectedTower.texture);        
 
           // Instead of pushing object directly into array,
           // send request to the responsible tower factory to do the work.
           gameScene.towers.push(tower);
         }
         
-        gameScene.hud.selectedTower.active = false;
+        gameScene.hud.selectedTower.destroy();
       }
     });
+
+
   }
 }
