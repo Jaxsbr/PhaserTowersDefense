@@ -11,8 +11,8 @@ class Tower {
     this.sprite.scaleY = 1;
     this.sprite.anims.play('towerPlainIdle');
     let position = this.gameScene.tiles[this.tileY][this.tileX].tileBounds;
-    this.sprite.y = position.y - 16;
-    this.sprite.x = position.x - 16;
+    this.sprite.y = position.y + 16;
+    this.sprite.x = position.x + 16;
 
     this.targetEnemy;
     this.range = 64;
@@ -44,34 +44,20 @@ class Tower {
   updateRotation() {
     // Rotate the tower towards it's current target or
     // rotate to default position if no target exist or if target not in range.
-    if (this.targetEnemy != null) {
-      if (this.targetEnemy.alive) {
-        let direction = this.gameScene.game.subtractPoints(
-          this.center,
-          this.targetEnemy.center
-        );
-        let distance = Phaser.Geom.Point.GetMagnitude(direction);
+    if (this.targetEnemy != null && this.targetEnemy.alive) {
+      let direction = this.gameScene.game.subtractPoints(this.center, this.targetEnemy.center);
+      let distance = Phaser.Geom.Point.GetMagnitude(direction);
 
-        if (distance <= this.range) {
-          this.rotation =
-            Math.atan2(
-              this.targetEnemy.center.y - this.center.y,
-              this.targetEnemy.center.x - this.center.x
-            ) *
-            (180 / Math.PI);
-        } else {
-          this.targetEnemy = null;
-
-          if (this.rotation > 0) {
-            this.rotation = this.rotation - 0.01;
-          } else {
-            this.rotation = 0;
-          }
-        }
-      }
+      if (distance <= this.range) {
+        console.log('Enemy in range');
+        this.rotation =
+          Math.atan2(
+            this.targetEnemy.center.y - this.center.y,
+            this.targetEnemy.center.x - this.center.x
+          ) *
+          (180 / Math.PI);
+      }      
     } else {
-      this.targetEnemy = null;
-
       if (this.rotation > 0) {
         this.rotation = this.rotation - 0.01;
       } else {

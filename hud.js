@@ -53,16 +53,26 @@ class HUD {
     this.gameScene.input.on('pointerdown', function(pointer) {
       let gameScene = game.scene.scenes[1];
       if (gameScene.hud.selectedTower) {
-        // TODO:
-        // Remove world offset from pointer
-        
-        let offset = { x: (gameScene.cols * 32) / 2, y: (gameScene.rows * 32) / 2 };
-        let mapStart = game.getScreenCenter(offset);        
-        let tileX = Math.ceil((pointer.worldX - mapStart.x) / 32);
-        let tileY = Math.ceil((pointer.worldY - mapStart.y) / 32);
 
-        if (!(tileX < 0 || tileX > gameScene.cols ||
-          tileY < 0 || tileY > gameScene.rows)) {          
+        let offset = { 
+          x: (gameScene.cols * 32) / 2, 
+          y: (gameScene.rows * 32) / 2 };
+        let mapStart = game.getScreenCenter(offset);        
+
+        let mapPoint = { 
+          x: pointer.worldX - mapStart.x, 
+          y: pointer.worldY - mapStart.y };
+
+        let tileX = Math.floor(mapPoint.x / 32);
+        let tileY = Math.floor(mapPoint.y / 32);
+
+        console.log('tileX: ' + tileX + "  tileY: " + tileY + "  mapstartX: " + mapStart.x + " mapstartY: " + mapStart.y);
+
+        if (!(tileX < 0 || 
+              tileY < 0 || 
+              tileX > gameScene.cols ||          
+              tileY > gameScene.rows)) {          
+                
           let tower = new Tower(tileX, tileY, gameScene.hud.selectedTower.texture);        
 
           // Instead of pushing object directly into array,

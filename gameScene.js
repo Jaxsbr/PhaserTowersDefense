@@ -69,11 +69,11 @@ class GameScene extends Phaser.Scene {
 
     let offset = { x: (this.cols * 32) / 2, y: (this.rows * 32) / 2 };
 
-    let center = this.game.getScreenCenter(offset);
+    let mapStart = this.game.getScreenCenter(offset);
 
-    this.placeTiles(center);
+    this.placeTiles(mapStart);
 
-    this.towers = [new Tower(5, 2)];
+    this.towers = [];
 
     this.enemies = [];
     for (let e = 0; e < this.enemyPoolSize; e++) {
@@ -87,7 +87,7 @@ class GameScene extends Phaser.Scene {
 
       enemy.activate(false);
 
-      enemy.reset(center, 10, 1.5); // default hp(10) and movespeed(1.5)
+      enemy.reset(mapStart, 10, 1.5); // default hp(10) and movespeed(1.5)
 
       this.enemies.push(enemy);
     }
@@ -95,12 +95,12 @@ class GameScene extends Phaser.Scene {
     this.enemySpawner = new EnemySpawner();
     // TODO:
     // Move spawnRate value into level map file
-    this.enemySpawner.setSpawnRate(2500);
+    this.enemySpawner.setSpawnRate(10000);
 
     this.hud = new HUD();
   }
 
-  placeTiles(center) {
+  placeTiles(mapStart) {
     for (var row = 0; row < this.rows; row++) {
       this.tiles[row] = [];
 
@@ -108,15 +108,15 @@ class GameScene extends Phaser.Scene {
         this.tiles[row][col] = {
           tileMapIndex: this.map[row][col],
           tileBounds: new Phaser.Geom.Rectangle(
-            center.x + col * 32,
-            center.y + row * 32,
+            mapStart.x + col * 32,
+            mapStart.y + row * 32,
             32,
             32
           ),
           sprite: this.add
             .sprite(
-              center.x + col * 32,
-              center.y + row * 32,
+              mapStart.x + col * 32,
+              mapStart.y + row * 32,
               'tiles',
               this.map[row][col]
             )
@@ -128,9 +128,9 @@ class GameScene extends Phaser.Scene {
 
   update() {
     this.towers.forEach((tower) => tower.update());
-    this.enemySpawner.update(this.game.loop.delta);
-    this.enemies.forEach((enemy) => enemy.update());
     this.updateTowerTargets();
+    this.enemySpawner.update(this.game.loop.delta);
+    this.enemies.forEach((enemy) => enemy.update());    
   }
 
   updateTowerTargets() {
@@ -140,14 +140,14 @@ class GameScene extends Phaser.Scene {
       let tower = this.towers[t];
 
       for (let e = 0; e < this.enemies.length; e++) {
-        // TODO:
-        // Only check active enemies
+        let enemy = this.enemies[e];
+        if (!enemy.sprite.active) {
+          continue;
+        }
 
         // TODO:
         // Use relative closeness by determining if
         // enemy within x amount of tiles from tower, only then check distance.
-
-        let enemy = this.enemies[e];
 
         if (!closestEnemy) {
           closestEnemy = enemy;
@@ -156,6 +156,7 @@ class GameScene extends Phaser.Scene {
 
         let direction = this.game.subtractPoints(tower.center, enemy.center);
         let distance = Phaser.Geom.Point.GetMagnitude(direction);
+        //console.log('enemy distance: ' + distance);
 
         if (distance < closestDistance) {
           closestDistance = distance;
@@ -170,7 +171,10 @@ class GameScene extends Phaser.Scene {
   spawnEnemy() {
     let gameScene = game.scene.scenes[1];
     let enemy;
-    let offset = { x: (gameScene.cols * 32) / 2, y: (gameScene.rows * 32) / 2 };
+    let offset = {
+      x: (gameScene.cols * 32) / 2,
+      y: (gameScene.rows * 32) / 2,
+    };
     let center = gameScene.game.getScreenCenter(offset);
 
     // TODO:
