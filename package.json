@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "Game.ts",
   "dependencies": {
+    "phaser": "^3.16.2",
     "phaser-ce": "2.11.0"
   },
   "devDependencies": {
