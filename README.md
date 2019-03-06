@@ -16,6 +16,7 @@ The goal with this project is to:
 ## Todo
 - ~Add IIS publish option~
 - ~Add webpack and npm as build options~
+- Dockerise
 - Port existing js to ts
 - [Game Plan](https://www.mindmeister.com/1220984067)
 - Score (free no sql db)
