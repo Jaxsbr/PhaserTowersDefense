@@ -1,4 +1,5 @@
 import 'phaser';
+import { LoadScene } from './scenes/loadScene';
 import { GameScene } from './scenes/gameScene';
 
 const config: GameConfig = {
@@ -6,7 +7,7 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.AUTO,
   parent: 'game',
-  scene: GameScene,
+  scene: [LoadScene, GameScene],
   physics: {
     default: 'arcade',
     arcade: {
@@ -16,9 +17,14 @@ const config: GameConfig = {
 };
 
 export class Game extends Phaser.Game {
+  public tileWidth: number = 32;
+  public tileHeight: number = 32;
+
   constructor(config: GameConfig) {
     super(config);
   }
+
+
 }
 
 window.addEventListener('load', () => {

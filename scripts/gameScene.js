@@ -5,7 +5,7 @@ class GameScene extends Phaser.Scene {
     this.init();
   }
 
-  init() {    
+  init() {
     this.rows = 10;
     this.cols = 10;
     this.enemyPoolSize = 150;
@@ -70,7 +70,10 @@ class GameScene extends Phaser.Scene {
 
     this.createTowerAnimations();
 
-    let offset = { x: (this.cols * game.tileWidth) / 2, y: (this.rows * game.tileHeight) / 2 };
+    let offset = {
+      x: (this.cols * game.tileWidth) / 2,
+      y: (this.rows * game.tileHeight) / 2,
+    };
 
     let mapStart = this.game.getScreenCenter(offset);
 
@@ -95,7 +98,7 @@ class GameScene extends Phaser.Scene {
       this.enemies.push(enemy);
     }
 
-    this.enemySpawner = new EnemySpawner();    
+    this.enemySpawner = new EnemySpawner();
     this.enemySpawner.setSpawnRate(this.level.enemySpawnRate);
 
     this.hud = new HUD();
@@ -128,9 +131,9 @@ class GameScene extends Phaser.Scene {
   }
 
   update() {
-    this.towers.forEach((tower) => tower.update());    
+    this.towers.forEach((tower) => tower.update());
     this.enemySpawner.update(this.game.loop.delta);
-    this.enemies.forEach((enemy) => enemy.update());    
+    this.enemies.forEach((enemy) => enemy.update());
     this.updateTowerTargets();
   }
 
@@ -158,7 +161,7 @@ class GameScene extends Phaser.Scene {
           closestEnemy = enemy;
           closestDistance = distance;
           continue;
-        }        
+        }
 
         if (distance < closestDistance) {
           closestDistance = distance;
@@ -177,7 +180,7 @@ class GameScene extends Phaser.Scene {
       x: (gameScene.cols * game.tileWidth) / 2,
       y: (gameScene.rows * game.tileHeight) / 2,
     };
-    let center = gameScene.game.getScreenCenter(offset);    
+    let center = gameScene.game.getScreenCenter(offset);
     let hp = gameScene.level.enemyHp;
     let moveSpeed = gameScene.level.enemyMoveSpeed;
 
