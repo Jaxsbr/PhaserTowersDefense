@@ -1,12 +1,9 @@
 # PhaserTowersDefense
 
-## Run & Build
+## Run
 ```
 npm install
-
 npm run dev
-
-npm run build
 ```
 
 ## Goal

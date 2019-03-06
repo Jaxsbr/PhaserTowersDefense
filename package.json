@@ -1,17 +1,16 @@
 {
-  "name": "PhaserTowerDefense",
+  "name": "phaser-tower-defense",
   "version": "1.0.0",
-  "main": "Game.ts",
-  "dependencies": {
-    "phaser": "^3.16.2",
-    "phaser-ce": "2.11.0"
-  },
   "devDependencies": {
-    "ts-loader": "^5.3.3",
-    "typescript": "^3.2.2",
-    "webpack": "^4.28.3",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "expose-loader": "0.7.5",
+    "ts-loader": "5.3.3",
+    "typescript": "3.3.3",
+    "webpack": "4.29.4",
+    "webpack-cli": "3.2.3",
+    "webpack-dev-server": "3.1.14"
+  },
+  "dependencies": {
+    "phaser": "3.16.2"
   },
   "scripts": {
     "dev": "webpack --mode development && webpack-dev-server --mode development",
@@ -22,11 +21,7 @@
     "url": "git+https://github.com/Jaxsbr/PhaserTowersDefense.git"
   },
   "keywords": [
-    "Phaser",
     "Phaser3",
-    "Game",
-    "Games",
-    "Gaming",
     "Typescript"
   ],
   "author": "Jaco Brink",
