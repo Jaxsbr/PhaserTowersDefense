@@ -7,10 +7,10 @@ export class Enemy {
   private gameScene: GameScene;
   private originalWayPoints: any;
   private waypoints: any;
-  private alive: boolean;  
+  public alive: boolean;  
   private hp: number;
   private moveSpeed: number;
-  private center: Phaser.Geom.Point;
+  public center: Phaser.Geom.Point;
   private next: Phaser.Geom.Point;
   private distance: number;
   private direction: Phaser.Geom.Point;

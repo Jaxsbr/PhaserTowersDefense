@@ -13,4 +13,12 @@ export class Global {
       y: +this.game.config.height / 2 - offset.y,
     };
   }
+
+  subtractPoints = function(fromPoint: Phaser.Geom.Point, toPoint: Phaser.Geom.Point) {
+    let temp = Phaser.Geom.Point.Clone(toPoint);
+    temp.x -= fromPoint.x;
+    temp.y -= fromPoint.y;
+  
+    return temp;
+  };
 }
