@@ -1,8 +1,10 @@
 import { Global } from './global';
+import { GameScene } from './scenes/gameScene';
 
 export class Enemy {
   private global: Global;
   public sprite: Phaser.GameObjects.Sprite;
+  private gameScene: GameScene;
   private originalWayPoints: any;
   private waypoints: any;
   private alive: boolean;  
@@ -36,6 +38,8 @@ export class Enemy {
     this.directionVector = new Phaser.Math.Vector2(0, 0);
     this.normalized = new Phaser.Math.Vector2(0, 0);
     this.velocity = new Phaser.Math.Vector2(0, 0);
+
+    this.gameScene = this.global.game.scene.scenes[1];
   }
 
   update(): void {

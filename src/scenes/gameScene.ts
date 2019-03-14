@@ -8,7 +8,7 @@ export class GameScene extends Phaser.Scene {
   private rows = 10;
   private cols = 10;
   private enemyPoolSize = 150;
-  private tiles = [];
+  public tiles: any[] = [];
   private levelIndex = 1;
   private map = [];
   private waypoints = [];
