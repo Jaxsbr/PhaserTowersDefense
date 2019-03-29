@@ -1,29 +1,27 @@
 import { Level } from '../level';
-import { Global } from '../global';
 import { Tower } from '../tower';
 import { Enemy } from '../enemy';
 import { EnemySpawner } from '../enemySpawner';
+import { Global } from '../global';
 
-export class GameScene extends Phaser.Scene {
-  private global: Global;
-  private rows = 10;
-  private cols = 10;
+export class GameScene extends Phaser.Scene {  
+  private rows: number = 10;
+  private cols: number = 10;
   private enemyPoolSize = 150;
   public tiles: any[] = [];
   private levelIndex = 1;
   private map = [];
   private waypoints = [];
   private level: Level;
-  private towers: Tower[];
-  private enemies: Enemy[];
+  private towers: Tower[] = [];
+  private enemies: Enemy[] = [];
   private enemySpawner: EnemySpawner;
+  public global: Global;
 
-  constructor(global: Global) {
+  constructor() {
     super({
       key: 'gameScene',
     });
-
-    this.global = global;
   }
 
   preload(): void {
@@ -32,6 +30,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.global = new Global(this.game);
     this.level = new Level(this.levelIndex);
     this.add.image(400, 300, 'background');
     this.createSquidAnimation();
@@ -95,8 +94,6 @@ export class GameScene extends Phaser.Scene {
       { x: 9, y: 9 },
     ];
   }
-
-  spawnEnemy(): void {}
 
   createSquidAnimation(): void {
     this.anims.create({
@@ -194,6 +191,70 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  update(): void {
+    this.towers.forEach((tower) => tower.update());
+    this.enemySpawner.update(this.game.loop.delta);
+    this.enemies.forEach((enemy) => enemy.update());
+    this.updateTowerTargets();
+  }
+
+  updateTowerTargets(): void {
+    for (let t = 0; t < this.towers.length; t++) {
+      let closestEnemy = null;
+      let closestDistance = 99999;
+      let tower = this.towers[t];
+
+      for (let e = 0; e < this.enemies.length; e++) {
+        let enemy = this.enemies[e];
+        if (!enemy.sprite.active || !enemy.alive) {
+          continue;
+        }
+
+        // TODO:
+        // Use relative closeness by determining if
+        // enemy within x amount of tiles from tower, only then check distance.
+
+        let direction = this.global.subtractPoints(tower.center, enemy.center);
+        let distance = Phaser.Geom.Point.GetMagnitude(direction);
+
+        if (closestEnemy == null) {
+          // If no target exists, take first viable enemy.
+          closestEnemy = enemy;
+          closestDistance = distance;
+          continue;
+        }
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestEnemy = enemy;
+        }
+      }
+
+      tower.targetEnemy = closestEnemy;
+    }
+  }
+
+  spawnEnemy = () => {
+    let gameScene = this.game.scene.scenes[1];
+    let enemy;
+    let offset = {
+      x: (gameScene.cols * this.global.tileWidth) / 2,
+      y: (gameScene.rows * this.global.tileHeight) / 2,
+    };
+    let center = this.global.getScreenCenter(offset);
+    let hp = gameScene.level.enemyHp;
+    let moveSpeed = gameScene.level.enemyMoveSpeed;
+
+    for (let e = 0; e < gameScene.enemies.length; e++) {
+      enemy = gameScene.enemies[e];
+      if (!enemy.sprite.active) {
+        enemy.reset(center, hp, moveSpeed);
+        enemy.activate(true);
+        break;
+      }
+    }
+  }
+
   setupEnemyPool(mapStart: any): void {
     for (let e = 0; e < this.enemyPoolSize; e++) {
       let sprite = this.add.sprite(0, 0, 'squidDown').setOrigin(0, 0);
@@ -201,7 +262,7 @@ export class GameScene extends Phaser.Scene {
       sprite.scaleY = 0.5;
 
       let waypoints = this.waypoints.slice();
-      let enemy = new Enemy(sprite, waypoints);
+      let enemy = new Enemy(sprite, waypoints, this.global);
 
       enemy.activate(false);
       enemy.reset(mapStart, this.level.enemyHp, this.level.enemyMoveSpeed);

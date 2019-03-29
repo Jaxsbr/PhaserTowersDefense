@@ -16,15 +16,10 @@ const config: GameConfig = {
   },
 };
 
-export class Game extends Phaser.Game {
-  public tileWidth: number = 32;
-  public tileHeight: number = 32;
-
+export class Game extends Phaser.Game {  
   constructor(config: GameConfig) {
-    super(config);
+    super(config);    
   }
-
-
 }
 
 window.addEventListener('load', () => {

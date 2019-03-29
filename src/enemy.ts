@@ -20,9 +20,10 @@ export class Enemy {
   private wayPointReachedThreshold: number;
   private movements: any;
 
-  constructor(sprite:Phaser.GameObjects.Sprite, originalWayPoints:any) {
+  constructor(sprite:Phaser.GameObjects.Sprite, originalWayPoints:any, global: Global) {
     this.sprite = sprite;
     this.originalWayPoints = originalWayPoints;
+    this.global = global;
     this.init();
   }
 
@@ -52,7 +53,7 @@ export class Enemy {
       return;
     }
 
-    if (!this.alive) {
+    if (!this.next) {
       let firstWayPoint = this.waypoints.shift();
       this.setNextWayPoint(firstWayPoint);
     }

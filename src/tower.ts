@@ -6,9 +6,9 @@ export class Tower {
   private global: Global;
   public sprite: Phaser.GameObjects.Sprite;
   private gameScene: GameScene;
-  private targetEnemy: Enemy;
+  public targetEnemy: Enemy;
   private range: number;
-  private center: Phaser.Geom.Point;
+  public center: Phaser.Geom.Point;
   private rotation: number;
 
   constructor(sprite:Phaser.GameObjects.Sprite, tileX: number, tileY: number) {    
