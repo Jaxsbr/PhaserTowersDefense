@@ -2,6 +2,7 @@ import { Level } from '../level';
 import { Global } from '../global';
 import { Tower } from '../tower';
 import { Enemy } from '../enemy';
+import { EnemySpawner } from '../enemySpawner';
 
 export class GameScene extends Phaser.Scene {
   private global: Global;
@@ -15,6 +16,7 @@ export class GameScene extends Phaser.Scene {
   private level: Level;
   private towers: Tower[];
   private enemies: Enemy[];
+  private enemySpawner: EnemySpawner;
 
   constructor(global: Global) {
     super({
@@ -31,11 +33,8 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.level = new Level(this.levelIndex);
-
     this.add.image(400, 300, 'background');
-
     this.createSquidAnimation();
-
     this.createTowerAnimations();
 
     let offset = {
@@ -44,17 +43,14 @@ export class GameScene extends Phaser.Scene {
     };
 
     let mapStart = this.global.getScreenCenter(offset);
-
     this.placeTiles(mapStart);
-
     this.setupEnemyPool(mapStart);
-
-    this.enemySpawner = new EnemySpawner();
-    this.enemySpawner.setSpawnRate(this.level.enemySpawnRate);
-
-    this.hud = new HUD();
+    this.setupEnemySpawner();
+    this.setupHUD();
   }
 
+  // TODO:
+  // Extract into MapLoader
   initMap(): void {
     this.map = [
       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -205,14 +201,20 @@ export class GameScene extends Phaser.Scene {
       sprite.scaleY = 0.5;
 
       let waypoints = this.waypoints.slice();
-
       let enemy = new Enemy(sprite, waypoints);
 
       enemy.activate(false);
-
       enemy.reset(mapStart, this.level.enemyHp, this.level.enemyMoveSpeed);
-
       this.enemies.push(enemy);
     }
+  }
+
+  setupEnemySpawner(): void {
+    this.enemySpawner = new EnemySpawner();
+    this.enemySpawner.setSpawnRate(this.level.enemySpawnRate);
+  }
+
+  setupHUD(): void {
+    //this.hud = new HUD();
   }
 }
