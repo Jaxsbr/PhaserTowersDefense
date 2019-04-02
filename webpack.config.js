@@ -7,11 +7,13 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
+    publicPath: 'PhaserTowerDefense'
   },
   module: {
     rules: [
       { test: /\.ts$/, loader: 'ts-loader', exclude: '/node_modules/' },
-      { test: /phaser\.js$/, loader: 'expose-loader?Phaser' }
+      { test: /phaser\.js$/, loader: 'expose-loader?Phaser' },
+      { test: /\.(png|json|ico)$/, loader: 'file-loader' }
     ]
   },
   devServer: {
