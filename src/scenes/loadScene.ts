@@ -27,7 +27,7 @@ export class LoadScene extends Phaser.Scene {
       frameWidth: 64,
       frameHeight: 80,
     });
-    this.load.spritesheet('tiles', './assets/tile_spritesheet.png', {
+    this.load.spritesheet('tiles', './assets/tiles_spritesheet.png', {
       frameWidth: 32,
       frameHeight: 32,
     });
