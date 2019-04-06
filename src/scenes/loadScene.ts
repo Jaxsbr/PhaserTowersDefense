@@ -6,7 +6,8 @@ export class LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('background', './assets/background.png');
+    this.load.image('menu_background', './assets/menu_background.png');
+    this.load.image('game_background', './assets/game_background.png');
 
     this.load.spritesheet('tower_plain', './assets/tower_plain.png', {
       frameWidth: 32,
@@ -33,7 +34,7 @@ export class LoadScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.add.image(0, 0, 'background');
+    this.add.image(400, 300, 'menu_background');
 
     this.input.once(
       'pointerup',

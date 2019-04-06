@@ -3,6 +3,7 @@ import { Tower } from '../tower';
 import { Enemy } from '../enemy';
 import { EnemySpawner } from '../enemySpawner';
 import { Global } from '../global';
+import { movementAnimation } from '../objects/movementAnimation';
 
 export class GameScene extends Phaser.Scene {  
   private rows: number = 10;
@@ -16,6 +17,7 @@ export class GameScene extends Phaser.Scene {
   private towers: Tower[] = [];
   private enemies: Enemy[] = [];
   private enemySpawner: EnemySpawner;
+  private animation: movementAnimation;
   public global: Global;
 
   constructor() {
@@ -32,8 +34,9 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     this.global = new Global(this.game);
     this.level = new Level(this.levelIndex);
-    this.add.image(400, 300, 'background');
+    this.add.image(400, 300, 'game_background');
     this.createSquidAnimation();
+    this.createOrkAnimation();
     this.createTowerAnimations();
 
     let offset = {
@@ -132,6 +135,52 @@ export class GameScene extends Phaser.Scene {
     this.anims.create({
       key: 'squidUp',
       frames: this.anims.generateFrameNumbers('squid', {
+        start: 9,
+        end: 11,
+        first: 9,
+      }),
+      repeat: -1,
+      frameRate: 5,
+    });
+  }
+
+  createOrkAnimation(): void {
+    this.anims.create({
+      key: 'orkDown',
+      frames: this.anims.generateFrameNumbers('ork', {
+        start: 0,
+        end: 2,
+        first: 0,
+      }),
+      repeat: -1,
+      frameRate: 5,
+    });
+
+    this.anims.create({
+      key: 'orkLeft',
+      frames: this.anims.generateFrameNumbers('ork', {
+        start: 3,
+        end: 5,
+        first: 3,
+      }),
+      repeat: -1,
+      frameRate: 6,
+    });
+
+    this.anims.create({
+      key: 'orkRight',
+      frames: this.anims.generateFrameNumbers('ork', {
+        start: 6,
+        end: 8,
+        first: 6,
+      }),
+      repeat: -1,
+      frameRate: 6,
+    });
+
+    this.anims.create({
+      key: 'orkUp',
+      frames: this.anims.generateFrameNumbers('ork', {
         start: 9,
         end: 11,
         first: 9,
@@ -255,14 +304,25 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  getRandomEnemyMovementAnimation(max: number): movementAnimation {
+    const random = Math.floor(Math.random() * Math.floor(max));
+    if (random === 0) {
+      return new movementAnimation("orkLeft", "orkRight", "orkUp", "orkDown");      
+    }
+    else {      
+      return new movementAnimation("squidLeft", "squidRight", "squidUp", "squidDown");
+    }    
+  }
+
   setupEnemyPool(mapStart: any): void {
     for (let e = 0; e < this.enemyPoolSize; e++) {
-      let sprite = this.add.sprite(0, 0, 'squidDown').setOrigin(0, 0);
+      let animation = this.getRandomEnemyMovementAnimation(2);
+      let sprite = this.add.sprite(0, 0, animation.down).setOrigin(0, 0);
       sprite.scaleX = 0.5;
       sprite.scaleY = 0.5;
 
       let waypoints = this.waypoints.slice();
-      let enemy = new Enemy(sprite, waypoints, this.global);
+      let enemy = new Enemy(sprite, waypoints, this.global, animation);
 
       enemy.activate(false);
       enemy.reset(mapStart, this.level.enemyHp, this.level.enemyMoveSpeed);

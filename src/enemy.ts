@@ -1,13 +1,14 @@
 import { Global } from './global';
 import { GameScene } from './scenes/gameScene';
+import { movementAnimation } from './objects/movementAnimation';
 
 export class Enemy {
-  private global: Global;
   public sprite: Phaser.GameObjects.Sprite;
+  public alive: boolean;  
+  private global: Global;  
   private gameScene: GameScene;
   private originalWayPoints: any;
-  private waypoints: any;
-  public alive: boolean;  
+  private waypoints: any;  
   private hp: number;
   private moveSpeed: number;
   public center: Phaser.Geom.Point;
@@ -19,11 +20,13 @@ export class Enemy {
   private velocity: Phaser.Math.Vector2;
   private wayPointReachedThreshold: number;
   private movements: any;
+  private animation: movementAnimation;
 
-  constructor(sprite:Phaser.GameObjects.Sprite, originalWayPoints:any, global: Global) {
+  constructor(sprite:Phaser.GameObjects.Sprite, originalWayPoints:any, global: Global, animation: movementAnimation) {
     this.sprite = sprite;
     this.originalWayPoints = originalWayPoints;
     this.global = global;
+    this.animation = animation;
     this.init();
   }
 
@@ -39,7 +42,6 @@ export class Enemy {
     this.directionVector = new Phaser.Math.Vector2(0, 0);
     this.normalized = new Phaser.Math.Vector2(0, 0);
     this.velocity = new Phaser.Math.Vector2(0, 0);
-
     this.gameScene = this.global.game.scene.scenes[1];
   }
 
@@ -207,19 +209,19 @@ export class Enemy {
 
   updateAnimation() {
     if (this.movements.left) {
-      this.sprite.anims.play('squidLeft', true);
+      this.sprite.anims.play(this.animation.left, true);
     }
 
     if (this.movements.right) {
-      this.sprite.anims.play('squidRight', true);
+      this.sprite.anims.play(this.animation.right, true);
     }
 
     if (this.movements.up) {
-      this.sprite.anims.play('squidUp', true);
+      this.sprite.anims.play(this.animation.up, true);
     }
 
     if (this.movements.down) {
-      this.sprite.anims.play('squidDown', true);
+      this.sprite.anims.play(this.animation.down, true);
     }
   }
 }
