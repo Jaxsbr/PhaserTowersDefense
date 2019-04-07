@@ -11,8 +11,9 @@ export class Tower {
   public center: Phaser.Geom.Point;
   private rotation: number;
 
-  constructor(sprite:Phaser.GameObjects.Sprite, tileX: number, tileY: number) {    
+  constructor(sprite:Phaser.GameObjects.Sprite, tileX: number, tileY: number, global: Global) {    
     this.sprite = sprite;
+    this.global = global;
     this.init(tileX, tileY);
   }
 

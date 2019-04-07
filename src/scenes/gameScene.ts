@@ -3,6 +3,7 @@ import { Tower } from '../tower';
 import { Enemy } from '../enemy';
 import { EnemySpawner } from '../enemySpawner';
 import { Global } from '../global';
+import { HUD } from '../hud';
 import { movementAnimation } from '../objects/movementAnimation';
 
 export class GameScene extends Phaser.Scene {  
@@ -18,6 +19,7 @@ export class GameScene extends Phaser.Scene {
   private enemies: Enemy[] = [];
   private enemySpawner: EnemySpawner;
   private animation: movementAnimation;
+  private hud: HUD;
   public global: Global;
 
   constructor() {
@@ -336,6 +338,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   setupHUD(): void {
-    //this.hud = new HUD();
+    this.hud = new HUD(this.global);
   }
 }
