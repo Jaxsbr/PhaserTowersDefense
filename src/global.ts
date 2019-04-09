@@ -1,7 +1,10 @@
+import { Level } from "./level";
+
 export class Global {
   public tileWidth: number = 32;
   public tileHeight: number = 32;
   public game: Phaser.Game;
+  public level: Level;
 
   constructor(game: Phaser.Game) {
     this.game = game;

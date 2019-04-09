@@ -1,6 +1,7 @@
 import { Global } from './global';
 import { GameScene } from './scenes/gameScene';
 import { Enemy } from './enemy';
+import { ProjectileConfig } from './objects/projectileConfig';
 
 export class Tower {
   private global: Global;
@@ -10,6 +11,8 @@ export class Tower {
   private range: number;
   public center: Phaser.Geom.Point;
   private rotation: number;
+  private shootRate: number;
+  private elapsedShootTime: number;
 
   constructor(sprite:Phaser.GameObjects.Sprite, tileX: number, tileY: number, global: Global) {    
     this.sprite = sprite;
@@ -25,31 +28,24 @@ export class Tower {
 
     let position = this.gameScene.tiles[tileY][tileX].tileBounds;
     this.sprite.y = position.y + 16;
-    this.sprite.x = position.x + 16;    
+    this.sprite.x = position.x + 16;
     this.range = 64;
+
+    this.shootRate = this.global.level.plainTowerShootRate;
+    this.elapsedShootTime = 0;
   }
 
-  update(): void {
+  update(delta: number): void {
+    // debugger;
     this.updateCenter();
     this.updateRotation();
+    this.updateShootRate(delta);
   }
 
   updateCenter(): void {
     let bounds = this.sprite.getBounds();
     let center = Phaser.Geom.Rectangle.GetCenter(bounds);
     this.assignOrSetCenter(center);
-  }
-
-  assignOrSetCenter(point: Phaser.Geom.Point): void {
-    // This function will only re-assign a point if it's undefined.
-    // If however the point is not undefined, we re-use by assigning x and y.
-    // This is done to improve memory usage performance.
-    if (!this.center) {
-      this.center = point;
-    } else {
-      this.center.x = point.x;
-      this.center.y = point.y;
-    }
   }
 
   updateRotation(): void {
@@ -76,5 +72,40 @@ export class Tower {
     }
 
     this.sprite.angle = this.rotation;
+  }
+
+  updateShootRate(delta): void {
+    this.elapsedShootTime += delta;
+    if (this.elapsedShootTime >= this.shootRate) {
+      this.elapsedShootTime = 0;
+      this.shoot();
+    }
+  }
+
+  assignOrSetCenter(point: Phaser.Geom.Point): void {
+    // This function will only re-assign a point if it's undefined.
+    // If however the point is not undefined, we re-use by assigning x and y.
+    // This is done to improve memory usage performance.
+    if (!this.center) {
+      this.center = point;
+    } else {
+      this.center.x = point.x;
+      this.center.y = point.y;
+    }
+  }
+
+  shoot(): void {
+    var projectileConfig = {
+      moveSpeed: 5,
+      position: new Phaser.Math.Vector2(0, 0),
+      bounds: new Phaser.GameObjects.Rectangle(this.gameScene, 0,0,0,0, 0xff0000, 1),
+    } as ProjectileConfig;
+
+    var createProjectileEvent = new CustomEvent(
+      'createProjectileRequest', { 
+        detail: projectileConfig });
+
+    window.dispatchEvent(createProjectileEvent);
+    // console.log('createProjectileRequest event raised');
   }
 }

@@ -16,11 +16,15 @@ export class GameScene extends Phaser.Scene {
   private waypoints = [];
   private level: Level;
   private towers: Tower[] = [];
+  private projectiles: any[] = []; // TODO: Create projectile class
   private enemies: Enemy[] = [];
   private enemySpawner: EnemySpawner;
   private animation: movementAnimation;
   private hud: HUD;
   public global: Global;
+  private delta: number;
+  private deltaTime: number = Date.now();
+
 
   constructor() {
     super({
@@ -31,11 +35,13 @@ export class GameScene extends Phaser.Scene {
   preload(): void {
     this.initMap();
     window.addEventListener('spawnEnemy', this.spawnEnemy);
+    window.addEventListener('createProjectileRequest', this.spawnEnemy);
   }
 
   create(): void {
     this.global = new Global(this.game);
     this.level = new Level(this.levelIndex);
+    this.global.level = this.level;
     this.add.image(400, 300, 'game_background');
     this.createSquidAnimation();
     this.createOrkAnimation();
@@ -242,11 +248,18 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  update(): void {
-    this.towers.forEach((tower) => tower.update());
-    this.enemySpawner.update(this.game.loop.delta);
+  update(): void {     
+    this.towers.forEach((tower) => tower.update(this.delta));
+    this.updateDelta();
+    this.enemySpawner.update(this.delta);
     this.enemies.forEach((enemy) => enemy.update());
     this.updateTowerTargets();
+  }
+
+  updateDelta() {
+    var now = Date.now();                   
+    this.delta = (now - this.deltaTime) / 1000;
+    this.deltaTime = now;
   }
 
   updateTowerTargets(): void {
@@ -304,7 +317,7 @@ export class GameScene extends Phaser.Scene {
         break;
       }
     }
-  }
+  }  
 
   getRandomEnemyMovementAnimation(max: number): movementAnimation {
     const random = Math.floor(Math.random() * Math.floor(max));
