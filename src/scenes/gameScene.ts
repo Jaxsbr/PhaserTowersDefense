@@ -5,6 +5,8 @@ import { EnemySpawner } from '../enemySpawner';
 import { Global } from '../global';
 import { HUD } from '../hud';
 import { movementAnimation } from '../objects/movementAnimation';
+import { Projectile } from '../projectile';
+import { ProjectileEngine } from '../projectileEngine';
 
 export class GameScene extends Phaser.Scene {  
   private rows: number = 10;
@@ -24,6 +26,7 @@ export class GameScene extends Phaser.Scene {
   public global: Global;
   private delta: number;
   private deltaTime: number = Date.now();
+  private projectileEngine: ProjectileEngine;
 
 
   constructor() {
@@ -57,6 +60,7 @@ export class GameScene extends Phaser.Scene {
     this.setupEnemyPool(mapStart);
     this.setupEnemySpawner();
     this.setupHUD();
+    this.setupProjectileEngine();
   }
 
   // TODO:
@@ -254,6 +258,7 @@ export class GameScene extends Phaser.Scene {
     this.enemySpawner.update(this.delta);
     this.enemies.forEach((enemy) => enemy.update());
     this.updateTowerTargets();
+    this.projectileEngine.update(this.delta);
   }
 
   updateDelta() {
@@ -352,5 +357,9 @@ export class GameScene extends Phaser.Scene {
 
   setupHUD(): void {
     this.hud = new HUD(this.global);
+  }
+
+  setupProjectileEngine(): void {
+    this.projectileEngine = new ProjectileEngine(this.global);
   }
 }
