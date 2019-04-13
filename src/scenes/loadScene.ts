@@ -23,11 +23,18 @@ export class LoadScene extends Phaser.Scene {
       frameWidth: 96,
       frameHeight: 96,
     });
+
     this.load.spritesheet('squid', './assets/squid_spritesheet.png', {
       frameWidth: 64,
       frameHeight: 80,
     });
+
     this.load.spritesheet('tiles', './assets/tiles_spritesheet.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+
+    this.load.spritesheet('projectile', './assets/projectile_spritesheet.png', {
       frameWidth: 32,
       frameHeight: 32,
     });

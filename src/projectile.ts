@@ -2,16 +2,18 @@ import { Global } from './global';
 import { GameScene } from './scenes/gameScene';
 import { Enemy } from './enemy';
 
-export class Projectile {
-  private global: Global;
-  public sprite: Phaser.GameObjects.Sprite;
-  private gameScene: GameScene;
+export class Projectile {  
+  public sprite: Phaser.GameObjects.Sprite;  
   public targetEnemy: Enemy;
-  private range: number;
   public center: Phaser.Geom.Point;
-  private rotation: number;
-  private shootRate: number;
-  private elapsedShootTime: number;
+  public bounds: Phaser.GameObjects.Rectangle;
+  public shootRate: number;
+  public active: boolean; // This determines if the projectile can be reused.
+
+  private global: Global;
+  private gameScene: GameScene;
+  private rotation: number;  
+  private elapsedShootTime: number;  
 
   constructor(sprite:Phaser.GameObjects.Sprite, tileX: number, tileY: number, global: Global) {    
     this.sprite = sprite;
@@ -20,10 +22,12 @@ export class Projectile {
   }
 
   init(tileX: number, tileY: number): void {    
-    
+    // TODO: Position the projectile as per tileX and tileY
   }
 
   update(delta: number): void {
-
+    if (this.active) {
+      // TODO: Move the projectile
+    }
   }  
 }

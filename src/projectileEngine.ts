@@ -63,9 +63,22 @@ export class ProjectileEngine {
 
   createProjectileRequest = (event: any) => {
     var projectTileConfig = event.detail as ProjectileConfig;
-    if (projectTileConfig) {
+    if (projectTileConfig) {      
+        // TODO:
         // Select a projectile from an object pool and reset it as per projectTileConfig
-        console.log('projectile creation request triggerd');
+        let projectile = null;
+        for (var i = 0; i < this.projectilePool.length; i++) {          
+          projectile = this.projectilePool[i] as Projectile;
+          if (projectile.active) {
+            projectile.sprite = projectTileConfig.sprite;
+            projectile.bounds = projectTileConfig.bounds;
+            projectile.position = projectTileConfig.position;
+            projectile.rotation = projectTileConfig.rotation;
+            projectile.shootRate = projectTileConfig.shootRate;
+            console.log('projectile creation request triggerd');
+            break;
+          }
+        }        
     }
   }
 }
