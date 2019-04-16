@@ -49,6 +49,7 @@ export class GameScene extends Phaser.Scene {
     this.createSquidAnimation();
     this.createOrkAnimation();
     this.createTowerAnimations();
+    this.createProjectileAnimations();
 
     let offset = {
       x: (this.cols * this.global.tileWidth) / 2,
@@ -222,6 +223,19 @@ export class GameScene extends Phaser.Scene {
         first: 0,
       }),
       repeat: 1,
+      frameRate: 5,
+    });
+  }
+
+  createProjectileAnimations(): void {
+    this.anims.create({
+      key: 'projectile_idle',
+      frames: this.anims.generateFrameNumbers('projectile', {
+        start: 0,
+        end: 2,
+        first: 0,
+      }),
+      repeat: -1,
       frameRate: 5,
     });
   }

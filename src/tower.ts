@@ -8,11 +8,13 @@ export class Tower {
   public sprite: Phaser.GameObjects.Sprite;
   private gameScene: GameScene;
   public targetEnemy: Enemy;
+  private targetDirection: Phaser.Geom.Point;
   private range: number;
   public center: Phaser.Geom.Point;
   private rotation: number;
   private shootRate: number;
   private elapsedShootTime: number;
+  private enemyInRange: boolean;
 
   constructor(sprite:Phaser.GameObjects.Sprite, tileX: number, tileY: number, global: Global) {    
     this.sprite = sprite;
@@ -38,6 +40,7 @@ export class Tower {
   update(delta: number): void {
     // debugger;
     this.updateCenter();
+    this.updateEnemyInRange();
     this.updateRotation();
     this.updateShootRate(delta);
   }
@@ -48,21 +51,26 @@ export class Tower {
     this.assignOrSetCenter(center);
   }
 
+  updateEnemyInRange(): void {
+    if (this.targetEnemy != null && this.targetEnemy.alive) {
+      this.targetDirection = this.global.subtractPoints(this.center, this.targetEnemy.center);
+      let distance = Phaser.Geom.Point.GetMagnitude(this.targetDirection);
+      if (distance <= this.range) {
+        this.enemyInRange = true;
+        return;
+      }      
+    }
+
+    this.enemyInRange = false;
+  }
+
   updateRotation(): void {
     // Rotate the tower towards it's current target or
     // rotate to default position if no target exist or if target not in range.
-    if (this.targetEnemy != null && this.targetEnemy.alive) {
-      let direction = this.global.subtractPoints(this.center, this.targetEnemy.center);
-      let distance = Phaser.Geom.Point.GetMagnitude(direction);
-
-      if (distance <= this.range) {
-        console.log('Enemy in range');
-        this.rotation =
-          Math.atan2(
-            this.targetEnemy.center.y - this.center.y,
-            this.targetEnemy.center.x - this.center.x
-          ) * (180 / Math.PI);
-      }      
+    if (this.enemyInRange) {
+      var xDistance = this.targetEnemy.center.x - this.center.x;
+      var yDistance = this.targetEnemy.center.y - this.center.y;
+      this.rotation = Math.atan2(yDistance, xDistance) * (180 / Math.PI);
     } else {
         if (this.rotation > 0) {
           this.rotation = this.rotation - 0.01;
@@ -77,8 +85,11 @@ export class Tower {
   updateShootRate(delta): void {
     this.elapsedShootTime += delta;
     if (this.elapsedShootTime >= this.shootRate) {
-      this.elapsedShootTime = 0;
-      this.shoot();
+      if (this.enemyInRange) {
+        console.log("shoot...");
+        this.elapsedShootTime = 0;
+        this.shoot();
+      }
     }
   }
 
@@ -95,10 +106,12 @@ export class Tower {
   }
 
   shoot(): void {
-    var projectileConfig = {
-      moveSpeed: 5,
-      position: new Phaser.Math.Vector2(0, 0),
+    var projectileConfig = {      
       bounds: new Phaser.GameObjects.Rectangle(this.gameScene, 0,0,0,0, 0xff0000, 1),
+      position: new Phaser.Math.Vector2(this.sprite.x, this.sprite.y),
+      rotation: 0,
+      moveSpeed: 5,      
+      direction: this.targetDirection
     } as ProjectileConfig;
 
     var createProjectileEvent = new CustomEvent(
@@ -106,6 +119,6 @@ export class Tower {
         detail: projectileConfig });
 
     window.dispatchEvent(createProjectileEvent);
-    // console.log('createProjectileRequest event raised');
+    console.log('createProjectileRequest event raised');
   }
 }

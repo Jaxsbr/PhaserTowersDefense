@@ -70,11 +70,12 @@ export class ProjectileEngine {
         for (var i = 0; i < this.projectilePool.length; i++) {          
           projectile = this.projectilePool[i] as Projectile;
           if (projectile.active) {
-            projectile.sprite = projectTileConfig.sprite;
+            //projectile.sprite = projectTileConfig.sprite;
             projectile.bounds = projectTileConfig.bounds;
             projectile.position = projectTileConfig.position;
             projectile.rotation = projectTileConfig.rotation;
-            projectile.shootRate = projectTileConfig.shootRate;
+            projectile.moveSpeed = projectTileConfig.moveSpeed;
+            projectile.direction = projectTileConfig.direction;
             console.log('projectile creation request triggerd');
             break;
           }
