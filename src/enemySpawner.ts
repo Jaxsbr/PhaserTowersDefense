@@ -1,5 +1,9 @@
 export class EnemySpawner {    
 
+  // TODO: Enemy spawner must also manage the lifecycle of an enemy.
+  // Move enemy list from gameScene to here. 
+  // Can Phaser ground be used?
+
     constructor(spawnStartTime = 0) {
         this.spawnEnemies = true;
         this.spawnRateElapsed = 0;    

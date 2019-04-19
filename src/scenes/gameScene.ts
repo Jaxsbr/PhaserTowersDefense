@@ -11,7 +11,6 @@ import { ProjectileEngine } from '../projectileEngine';
 export class GameScene extends Phaser.Scene {  
   private rows: number = 10;
   private cols: number = 10;
-  private enemyPoolSize = 150;
   public tiles: any[] = [];
   private levelIndex = 1;
   private map = [];
@@ -229,13 +228,13 @@ export class GameScene extends Phaser.Scene {
 
   createProjectileAnimations(): void {
     this.anims.create({
-      key: 'projectile_idle',
+      key: 'projectileIdle',
       frames: this.anims.generateFrameNumbers('projectile', {
         start: 0,
-        end: 2,
+        end: 0,
         first: 0,
       }),
-      repeat: -1,
+      repeat: 1,
       frameRate: 5,
     });
   }
@@ -267,12 +266,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(): void {     
-    this.towers.forEach((tower) => tower.update(this.delta));
+    //this.towers.forEach((tower) => tower.update(this.delta));
+    this.towers.forEach((tower) => tower.update(this.game.loop.rawDelta));
     this.updateDelta();
-    this.enemySpawner.update(this.delta);
+    //this.enemySpawner.update(this.delta);
+    this.enemySpawner.update(this.game.loop.rawDelta);
     this.enemies.forEach((enemy) => enemy.update());
     this.updateTowerTargets();
-    this.projectileEngine.update(this.delta);
+    //this.projectileEngine.update(this.delta);
+    this.projectileEngine.update(this.game.loop.rawDelta);
   }
 
   updateDelta() {
@@ -311,8 +313,7 @@ export class GameScene extends Phaser.Scene {
           closestDistance = distance;
           closestEnemy = enemy;
         }
-      }
-
+      }      
       tower.targetEnemy = closestEnemy;
     }
   }
@@ -320,6 +321,7 @@ export class GameScene extends Phaser.Scene {
   spawnEnemy = () => {
     let gameScene = this.game.scene.scenes[1];
     let enemy;
+    let enemyCount = gameScene.enemies.length;
     let offset = {
       x: (gameScene.cols * this.global.tileWidth) / 2,
       y: (gameScene.rows * this.global.tileHeight) / 2,
@@ -328,11 +330,12 @@ export class GameScene extends Phaser.Scene {
     let hp = gameScene.level.enemyHp;
     let moveSpeed = gameScene.level.enemyMoveSpeed;
 
-    for (let e = 0; e < gameScene.enemies.length; e++) {
+    for (let e = 0; e < enemyCount; e++) {
       enemy = gameScene.enemies[e];
       if (!enemy.sprite.active) {
         enemy.reset(center, hp, moveSpeed);
         enemy.activate(true);
+        console.log(Date.now() + ': enemy spawned');
         break;
       }
     }
@@ -349,7 +352,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   setupEnemyPool(mapStart: any): void {
-    for (let e = 0; e < this.enemyPoolSize; e++) {
+    for (let e = 0; e < this.global.level.enemyPoolSize; e++) {
       let animation = this.getRandomEnemyMovementAnimation(2);
       let sprite = this.add.sprite(0, 0, animation.down).setOrigin(0, 0);
       sprite.scaleX = 0.5;

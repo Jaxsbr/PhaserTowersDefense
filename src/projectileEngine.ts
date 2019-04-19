@@ -24,23 +24,30 @@ export class ProjectileEngine {
     this.init();
   }
 
-  preload(): void {    
-    window.addEventListener('createProjectileRequest', this.createProjectileRequest);
-  }
-
   init(): void {    
+    window.addEventListener('createProjectileRequest', this.createProjectileRequest);
     this.initProjectilePool();
   }
 
   initProjectilePool() {        
-    const sprite = this.getDefaultProjectileSprite();
+    //const sprite = this.getDefaultProjectileSprite();
     const poolSize = 10;
     const tileX = 0;
     const tileY = 0;
 
     for (var i = 0; i < poolSize; i++) {
+      let position = this.gameScene.tiles[tileY][tileX].tileBounds;
+      const y = position.y + 16;
+      const x = position.x + 16;
+
+      const sprite = this.gameScene.add
+        .sprite(0, 0, 'projectile')
+        .setOrigin(0, 0)
+        .setInteractive();
+        sprite.scaleX = 0.2;
+        sprite.scaleY = 0.2;
       this.projectilePool.push(
-        new Projectile (sprite, tileX,  tileY, this.global)
+        new Projectile (sprite, x,  y, this.global)
       );
     }
   }
@@ -69,14 +76,17 @@ export class ProjectileEngine {
         let projectile = null;
         for (var i = 0; i < this.projectilePool.length; i++) {          
           projectile = this.projectilePool[i] as Projectile;
-          if (projectile.active) {
+          if (!projectile.active) {
             //projectile.sprite = projectTileConfig.sprite;
+            projectile.ttl = projectile.maxTtl;
+            projectile.active = true;
+            projectile.sprite.active = true;
+            projectile.sprite.visible = true;
             projectile.bounds = projectTileConfig.bounds;
             projectile.position = projectTileConfig.position;
             projectile.rotation = projectTileConfig.rotation;
             projectile.moveSpeed = projectTileConfig.moveSpeed;
             projectile.direction = projectTileConfig.direction;
-            console.log('projectile creation request triggerd');
             break;
           }
         }        

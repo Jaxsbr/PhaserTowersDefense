@@ -13,8 +13,14 @@ export class Tower {
   public center: Phaser.Geom.Point;
   private rotation: number;
   private shootRate: number;
+  private shootRange: number;
   private elapsedShootTime: number;
   private enemyInRange: boolean;
+
+  private shootCount: number = 0;
+
+  private delta: number;
+  private deltaTime: number = Date.now();
 
   constructor(sprite:Phaser.GameObjects.Sprite, tileX: number, tileY: number, global: Global) {    
     this.sprite = sprite;
@@ -34,15 +40,23 @@ export class Tower {
     this.range = 64;
 
     this.shootRate = this.global.level.plainTowerShootRate;
+    this.shootRange = this.global.level.plainTowerShootRange;
     this.elapsedShootTime = 0;
   }
 
   update(delta: number): void {
     // debugger;
+    this.updateDelta();
     this.updateCenter();
     this.updateEnemyInRange();
     this.updateRotation();
-    this.updateShootRate(delta);
+    this.updateShootRate(this.delta);
+  }
+
+  updateDelta() {
+    var now = Date.now();                   
+    this.delta = (now - this.deltaTime) / 1000;
+    this.deltaTime = now;
   }
 
   updateCenter(): void {
@@ -86,7 +100,6 @@ export class Tower {
     this.elapsedShootTime += delta;
     if (this.elapsedShootTime >= this.shootRate) {
       if (this.enemyInRange) {
-        console.log("shoot...");
         this.elapsedShootTime = 0;
         this.shoot();
       }
@@ -106,19 +119,18 @@ export class Tower {
   }
 
   shoot(): void {
+    this.shootCount++;
     var projectileConfig = {      
       bounds: new Phaser.GameObjects.Rectangle(this.gameScene, 0,0,0,0, 0xff0000, 1),
       position: new Phaser.Math.Vector2(this.sprite.x, this.sprite.y),
       rotation: 0,
-      moveSpeed: 5,      
-      direction: this.targetDirection
+      moveSpeed: this.global.level.plainTowerMoveSpeed,      
+      direction: new Phaser.Geom.Point(this.targetDirection.x, this.targetDirection.y)
     } as ProjectileConfig;
 
-    var createProjectileEvent = new CustomEvent(
-      'createProjectileRequest', { 
-        detail: projectileConfig });
+    var createProjectileEvent = new CustomEvent('createProjectileRequest', { detail: projectileConfig });
 
     window.dispatchEvent(createProjectileEvent);
-    console.log('createProjectileRequest event raised');
+    console.log('shootCount: ' + this.shootCount);
   }
 }
