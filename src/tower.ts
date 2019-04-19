@@ -37,7 +37,7 @@ export class Tower {
     let position = this.gameScene.tiles[tileY][tileX].tileBounds;
     this.sprite.y = position.y + 16;
     this.sprite.x = position.x + 16;
-    this.range = 64;
+    this.range = this.global.level.plainTowerShootRange;
 
     this.shootRate = this.global.level.plainTowerShootRate;
     this.shootRange = this.global.level.plainTowerShootRange;

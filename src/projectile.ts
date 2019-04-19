@@ -16,9 +16,8 @@ export class Projectile {
   public elapsedShootTime: number;  
   public moveSpeed: number;
   public direction: Phaser.Geom.Point;
-  public position: Phaser.Math.Vector2;
   public ttl: number;
-  public maxTtl: number = 1000;
+  public maxTtl: number = 50;
 
   constructor(sprite:Phaser.GameObjects.Sprite, tileX: number, tileY: number, global: Global) {        
     this.sprite = sprite;
@@ -44,11 +43,12 @@ export class Projectile {
         this.active = false;
         this.sprite.active = false;
         this.sprite.visible = false;
+        return;
       }
 
       // TODO: Add delta
       this.velocity.x = this.direction.x * this.moveSpeed;
-      this.velocity.x = this.direction.y * this.moveSpeed;
+      this.velocity.y = this.direction.y * this.moveSpeed;
 
       this.sprite.x += this.velocity.x;
       this.sprite.y += this.velocity.y;

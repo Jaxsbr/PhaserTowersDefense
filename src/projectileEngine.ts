@@ -31,7 +31,7 @@ export class ProjectileEngine {
 
   initProjectilePool() {        
     //const sprite = this.getDefaultProjectileSprite();
-    const poolSize = 10;
+    const poolSize = 100;
     const tileX = 0;
     const tileY = 0;
 
@@ -83,7 +83,8 @@ export class ProjectileEngine {
             projectile.sprite.active = true;
             projectile.sprite.visible = true;
             projectile.bounds = projectTileConfig.bounds;
-            projectile.position = projectTileConfig.position;
+            projectile.sprite.x = projectTileConfig.position.x;
+            projectile.sprite.y = projectTileConfig.position.y;
             projectile.rotation = projectTileConfig.rotation;
             projectile.moveSpeed = projectTileConfig.moveSpeed;
             projectile.direction = projectTileConfig.direction;
