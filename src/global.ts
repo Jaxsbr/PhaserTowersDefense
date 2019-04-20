@@ -46,9 +46,9 @@ export class Global {
   isValidMapTile = function(tileIndex: any) {
     let gameScene = this.game.scene.scenes[1];
   
-    for (let w = 0; w < gameScene.waypoints.length; w++) {
-      if(gameScene.waypoints[w].x == tileIndex.x &&
-         gameScene.waypoints[w].y == tileIndex.y) {
+    for (let w = 0; w < this.level.waypoints.length; w++) {
+      if(this.level.waypoints[w].x == tileIndex.x &&
+        this.level.waypoints[w].y == tileIndex.y) {
            return false;
          }
     }

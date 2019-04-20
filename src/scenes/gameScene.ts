@@ -13,8 +13,6 @@ export class GameScene extends Phaser.Scene {
   private cols: number = 10;
   public tiles: any[] = [];
   private levelIndex = 1;
-  private map = [];
-  private waypoints = [];
   private level: Level;
   private towers: Tower[] = [];
   private projectiles: any[] = []; // TODO: Create projectile class
@@ -35,7 +33,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.initMap();
     window.addEventListener('spawnEnemy', this.spawnEnemy);
     window.addEventListener('createProjectileRequest', this.spawnEnemy);
   }
@@ -61,54 +58,7 @@ export class GameScene extends Phaser.Scene {
     this.setupEnemySpawner();
     this.setupHUD();
     this.setupProjectileEngine();
-  }
-
-  // TODO:
-  // Extract into MapLoader
-  initMap(): void {
-    this.map = [
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 1, 0, 0, 1, 1, 1, 1],
-      [0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-      [0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-      [0, 0, 0, 1, 1, 1, 1, 0, 0, 1],
-      [0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-      [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    ];
-
-    this.waypoints = [
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 0, y: 2 },
-      { x: 1, y: 2 },
-      { x: 2, y: 2 },
-      { x: 3, y: 2 },
-      { x: 3, y: 3 },
-      { x: 3, y: 4 },
-      { x: 3, y: 5 },
-      { x: 3, y: 6 },
-      { x: 4, y: 6 },
-      { x: 5, y: 6 },
-      { x: 6, y: 6 },
-      { x: 6, y: 5 },
-      { x: 6, y: 4 },
-      { x: 6, y: 3 },
-      { x: 7, y: 3 },
-      { x: 8, y: 3 },
-      { x: 9, y: 3 },
-      { x: 9, y: 4 },
-      { x: 9, y: 5 },
-      { x: 9, y: 6 },
-      { x: 9, y: 7 },
-      { x: 8, y: 7 },
-      { x: 8, y: 8 },
-      { x: 8, y: 9 },
-      { x: 9, y: 9 },
-    ];
-  }
+  }  
 
   createSquidAnimation(): void {
     this.anims.create({
@@ -245,7 +195,7 @@ export class GameScene extends Phaser.Scene {
 
       for (var col = 0; col < this.cols; col++) {
         this.tiles[row][col] = {
-          tileMapIndex: this.map[row][col],
+          tileMapIndex: this.global.level.map[row][col],
           tileBounds: new Phaser.Geom.Rectangle(
             mapStart.x + col * this.global.tileWidth,
             mapStart.y + row * this.global.tileHeight,
@@ -257,7 +207,7 @@ export class GameScene extends Phaser.Scene {
               mapStart.x + col * this.global.tileWidth,
               mapStart.y + row * this.global.tileHeight,
               'tiles',
-              this.map[row][col]
+              this.global.level.map[row][col]
             )
             .setOrigin(0, 0),
         };
@@ -358,7 +308,7 @@ export class GameScene extends Phaser.Scene {
       sprite.scaleX = 0.5;
       sprite.scaleY = 0.5;
 
-      let waypoints = this.waypoints.slice();
+      let waypoints = this.global.level.waypoints.slice();
       let enemy = new Enemy(sprite, waypoints, this.global, animation);
 
       enemy.activate(false);
