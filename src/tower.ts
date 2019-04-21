@@ -131,6 +131,5 @@ export class Tower {
     var createProjectileEvent = new CustomEvent('createProjectileRequest', { detail: projectileConfig });
 
     window.dispatchEvent(createProjectileEvent);
-    console.log('shootCount: ' + this.shootCount);
   }
 }

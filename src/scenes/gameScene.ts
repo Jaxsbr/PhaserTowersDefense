@@ -9,8 +9,8 @@ import { Projectile } from '../projectile';
 import { ProjectileEngine } from '../projectileEngine';
 
 export class GameScene extends Phaser.Scene {  
-  private rows: number = 10;
-  private cols: number = 10;
+  public rows: number = 10;
+  public cols: number = 10;
   public tiles: any[] = [];
   private levelIndex = 1;
   private level: Level;
@@ -33,8 +33,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-    window.addEventListener('spawnEnemy', this.spawnEnemy);
-    window.addEventListener('createProjectileRequest', this.spawnEnemy);
   }
 
   create(): void {
@@ -54,7 +52,6 @@ export class GameScene extends Phaser.Scene {
 
     let mapStart = this.global.getScreenCenter(offset);
     this.placeTiles(mapStart);
-    this.setupEnemyPool(mapStart);
     this.setupEnemySpawner();
     this.setupHUD();
     this.setupProjectileEngine();
@@ -216,15 +213,33 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(): void {     
-    //this.towers.forEach((tower) => tower.update(this.delta));
     this.towers.forEach((tower) => tower.update(this.game.loop.rawDelta));
     this.updateDelta();
-    //this.enemySpawner.update(this.delta);
     this.enemySpawner.update(this.game.loop.rawDelta);
-    this.enemies.forEach((enemy) => enemy.update());
     this.updateTowerTargets();
-    //this.projectileEngine.update(this.delta);
     this.projectileEngine.update(this.game.loop.rawDelta);
+
+    // TODO:
+    // Enable physics
+    // Check collision between projectiles and enemies.
+
+    this.physics.collide(
+      this.enemySpawner.enemySprites,
+      this.projectileEngine.projectileSprites,
+      this.projectileEnemyCollision)
+  }
+
+  projectileEnemyCollision(enemy: Phaser.GameObjects.GameObject, projectile: Phaser.GameObjects.GameObject): void {
+    // TODO:
+    // "GameObjects" are returned to the method during a callback.
+    // We provide the collision method with 2 lists of phaser sprites.
+    // The issue however is that the sprites is not connected to the actual object
+    // that manages the enemy or projectile and thus we cannot properly destroy the objects.
+    // We need drop the "list" of sprites and instead have the objects
+    // inherit from a phaser game object, which will hopefully allow us to
+    // pass a list of our enemy and projectile "game object" to the collide method
+    // and have access to the colliding objects here.
+    console.log('enemy - projectile collision event raised');
   }
 
   updateDelta() {
@@ -239,8 +254,8 @@ export class GameScene extends Phaser.Scene {
       let closestDistance = 99999;
       let tower = this.towers[t];
 
-      for (let e = 0; e < this.enemies.length; e++) {
-        let enemy = this.enemies[e];
+      for (let e = 0; e < this.enemySpawner.enemies.length; e++) {
+        let enemy = this.enemySpawner.enemies[e];
         if (!enemy.sprite.active || !enemy.alive) {
           continue;
         }
@@ -268,29 +283,6 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  spawnEnemy = () => {
-    let gameScene = this.game.scene.scenes[1];
-    let enemy;
-    let enemyCount = gameScene.enemies.length;
-    let offset = {
-      x: (gameScene.cols * this.global.tileWidth) / 2,
-      y: (gameScene.rows * this.global.tileHeight) / 2,
-    };
-    let center = this.global.getScreenCenter(offset);
-    let hp = gameScene.level.enemyHp;
-    let moveSpeed = gameScene.level.enemyMoveSpeed;
-
-    for (let e = 0; e < enemyCount; e++) {
-      enemy = gameScene.enemies[e];
-      if (!enemy.sprite.active) {
-        enemy.reset(center, hp, moveSpeed);
-        enemy.activate(true);
-        console.log(Date.now() + ': enemy spawned');
-        break;
-      }
-    }
-  }  
-
   getRandomEnemyMovementAnimation(max: number): movementAnimation {
     const random = Math.floor(Math.random() * Math.floor(max));
     if (random === 0) {
@@ -301,24 +293,8 @@ export class GameScene extends Phaser.Scene {
     }    
   }
 
-  setupEnemyPool(mapStart: any): void {
-    for (let e = 0; e < this.global.level.enemyPoolSize; e++) {
-      let animation = this.getRandomEnemyMovementAnimation(2);
-      let sprite = this.add.sprite(0, 0, animation.down).setOrigin(0, 0);
-      sprite.scaleX = 0.5;
-      sprite.scaleY = 0.5;
-
-      let waypoints = this.global.level.waypoints.slice();
-      let enemy = new Enemy(sprite, waypoints, this.global, animation);
-
-      enemy.activate(false);
-      enemy.reset(mapStart, this.level.enemyHp, this.level.enemyMoveSpeed);
-      this.enemies.push(enemy);
-    }
-  }
-
   setupEnemySpawner(): void {
-    this.enemySpawner = new EnemySpawner();
+    this.enemySpawner = new EnemySpawner(this.global);
     this.enemySpawner.setSpawnRate(this.level.enemySpawnRate);
   }
 
