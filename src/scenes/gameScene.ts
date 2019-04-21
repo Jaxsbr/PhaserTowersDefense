@@ -222,24 +222,6 @@ export class GameScene extends Phaser.Scene {
     // TODO:
     // Enable physics
     // Check collision between projectiles and enemies.
-
-    this.physics.collide(
-      this.enemySpawner.enemySprites,
-      this.projectileEngine.projectileSprites,
-      this.projectileEnemyCollision)
-  }
-
-  projectileEnemyCollision(enemy: Phaser.GameObjects.GameObject, projectile: Phaser.GameObjects.GameObject): void {
-    // TODO:
-    // "GameObjects" are returned to the method during a callback.
-    // We provide the collision method with 2 lists of phaser sprites.
-    // The issue however is that the sprites is not connected to the actual object
-    // that manages the enemy or projectile and thus we cannot properly destroy the objects.
-    // We need drop the "list" of sprites and instead have the objects
-    // inherit from a phaser game object, which will hopefully allow us to
-    // pass a list of our enemy and projectile "game object" to the collide method
-    // and have access to the colliding objects here.
-    console.log('enemy - projectile collision event raised');
   }
 
   updateDelta() {
