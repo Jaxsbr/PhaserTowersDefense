@@ -19,6 +19,15 @@
         left: 50%;
       }
 
+      #instruction {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0%);
+        z-index: 1;
+        font-size: xx-large;
+        color: aliceblue;
+      }
+
       #game {        
         margin-left: -50%;
       }
@@ -27,9 +36,19 @@
   <body>
     <div class="container">
       <h1>phaser tower defense</h1>
-      <div id="container">
+      <div id="container" onclick="hideInstruction()">
         <div id="game"></div>
-      </div>      
+      </div>
+      <div id="instruction" onclick="hideInstruction()">
+        Click To Start
+      </div>
     </div>
+
+    <script>
+      function hideInstruction() {
+        var div = document.getElementById('instruction');
+        div.style.visibility = 'collapse';
+      };
+    </script>
   </body>
 </html>
